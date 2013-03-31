@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <form class="form-custom" method="POST" action="{{reverse_url('login')}}">
+        {% module xsrf_form_html() %}
+        <h2 class="form-custom-heading">网盘API</h2>
+        {% if err %}
+        <div class="alert alert-error">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>{{err['msg']}}</strong>
+        </div>
+        {% end %}
+        <input type="text" class="input-block-level" name="email" placeholder="邮箱地址"/>
+        <input type="password" class="input-block-level" name="password" placeholder="密码"/>
+        <button class="btn btn-primary" type="submit" id="login">Login</button>
+        <a href="{{reverse_url('register')}}" class="btn btn-primary pull-right">Register</a>
+    </form>
+</div>
+{% end %}
+{% block js %}
+<script type="text/javascript" src="{{static_url('js/validator.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#login').bind('click', function(){
+            return check_login();
+        });
+    });
+</script>
+{% end %}

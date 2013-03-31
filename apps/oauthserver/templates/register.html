@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <form class="form-custom" method="POST" action="{{reverse_url('register')}}">
+        {% module xsrf_form_html() %}
+        <h3 class="form-custom-heading">Register</h3>
+        {% if err %}
+        <div class="alert alert-error">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>{{err['msg']}}</strong>
+        </div>
+        {% end %}
+        <input type="text" class="input-block-level" name="username" placeholder="username..."/>
+        <input type="text" class="input-block-level" name="email" placeholder="email..."/>
+        <input type="password" class="input-block-level" name="password" placeholder="password..."/>
+        <button class="btn btn-primary" type="submit" id="register">Register</button>
+    </form>
+</div>
+{% end %}
+{% block js %}
+<script type="text/javascript" src="{{static_url('js/validator.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function (){
+        $('#register').bind('click', function(){
+            return check_register();
+        });
+    });
+</script>
+{% end %}

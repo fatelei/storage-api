@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <title>网盘API授权</title>
+        <meta charset="utf8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link type="text/css" href="{{static_url('css/bootstrap.min.css')}}" rel="stylesheet"/>
+        <link type="text/css" href="{{static_url('css/bootstrap-responsive.min.css')}}" rel="stylesheet"/>
+        <link type="text/css" href="{{static_url('css/base.css')}}" rel="stylesheet"/>
+    </head>
+    <body>
+        {% block content %}
+        {% end %}
+        <footer class="footer">
+            <div class="container">
+                <p>Copyright &copy; fate</p>
+            </div>
+        </footer>
+        <script type="text/javascript" src="{{static_url('js/jquery-1.9.1.js')}}"></script>
+        <script type="text/javascript" src="{{static_url('js/bootstrap.min.js')}}"></script>
+        {% block js %}
+        {% end %}
+    </body>
+</html>
