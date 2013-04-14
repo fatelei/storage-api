@@ -14,3 +14,10 @@ class HTTP_CODE:
     NOT_FOUND = 404
     UNSUPPORT_METHOD = 405
     INTERNAL_SERVER_ERROR = 500
+
+class MACRO:
+    """
+    macro
+    """
+    ZERO = 0
+    DEFAULT_MAX_COUNT = 20
