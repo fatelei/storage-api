@@ -16,7 +16,7 @@ class Member(Document):
     meta = {
         'collection': 'member',
         'allow_inheritance': False,
-        'index': ['member_id', 'name', 'email'],
+        'indexes': ['member_id', 'name', 'email'],
         'shard_key': ('member_id', 'email')
     }
 

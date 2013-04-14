@@ -52,6 +52,7 @@ class AuthorizeTokenAjaxHandler(BaseHandler):
                 newtoken = AccessToken()
                 newtoken.member_id = self.user.member_id
                 newtoken.set_access_token()
+                newtoken.set_refresh_token()
                 newtoken.set_expire_time()
                 newtoken.save()
                 self.write(json.dumps({'msg': u'create token success'}))

@@ -2,4 +2,7 @@
 #-*-coding: utf8-*-
 
 from base import BaseHandler
-from store import *
+
+class FilesHandler(BaseHandler):
+	def real_get(self):
+		
