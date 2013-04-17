@@ -18,3 +18,7 @@ class InvalidRequest(OAuthException):
     def __init__(self, message=u'请求验证失败，参数不完整、用户名密码错误等！'):
         super(InvalidRequest, self).__init__(code=101, message=message)
 
+class ServerError(OAuthException):
+    def __init__(self, message=u'internal server error'):
+        super(ServerError, self).__init__(code=500, message=message)
+

@@ -8,8 +8,8 @@ install_requires = ['mongoengine',
 
 entry_points = """
 	[console_script]
-	api=api.app:run
-	oauth=oauthserver.app:run
+	api=api.manage:run
+	oauth=oauthserver.manage:run
 """
 
 setup(
@@ -19,5 +19,5 @@ setup(
 	install_requires = install_requires,
 	entry_points = entry_points,
 	packages = find_packages('apps'),
-	package_dir = ['': 'apps']
+	package_dir = {'': 'apps'}
 )

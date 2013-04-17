@@ -6,6 +6,17 @@ from api.allin.macro import MACRO
 from api.mixins.store import FileMixin
 
 class FilesHandler(BaseHandler, FileMixin):
-	def real_get(self):
-		offset = int(self.get_argument('offset', MACRO.ZERO))
-		
+    def real_get(self):
+        offset = int(self.get_argument('offset', MACRO.ZERO))
+        pass
+
+class FileDownloadHandler(BaseHandler, FileMixin):
+    pass
+
+class FileUploadHandler(BaseHandler, FileMixin):
+    pass
+
+class FileRemoveHandler(BaseHandler, FileMixin):
+    pass
+
+    

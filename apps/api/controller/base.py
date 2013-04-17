@@ -37,7 +37,7 @@ class BaseHandler(RequestHandler, Authenticator):
 
     def finish(self, chunk = None):
         self._chunk = chunk
-        self.set_header("Content-Type", "application/json")
+        self.set_header("Content-Type", "application/json; charset=UTF-8")
         RequestHandler.finish(self, self._chunk)
 
     @ExceptionHandler

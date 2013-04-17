@@ -11,7 +11,7 @@ from config.settings import SERVER
 def run():
 	options.parse_command_line()
     app = Application(handlers, **SERVER)
-    app.listen(8888)
+    app.listen(8889)
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == '__main__':

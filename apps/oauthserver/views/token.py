@@ -5,7 +5,7 @@ import json
 import time
 
 from tornado import web
-from models.token import AccessToken
+from models.token import OAuthToken
 from views.base import BaseHandler
 from mongoengine import Q
 
@@ -20,11 +20,11 @@ class AuthorizeTokenAjaxHandler(BaseHandler):
     @web.authenticated
     def get(self):
         info = {}
-        token = AccessToken.objects(Q(member_id = self.user.member_id) & 
-                                    Q(expire__gt = int(time.time()))) .first()
+        token = OAuthToken.objects(Q(member_id = self.user.member_id) & 
+                                   Q(expire__gt = int(time.time()))) .first()
         if token:
             info['authorize'] = True
-            info['token'] = token.access_token
+            info['token'] = token.client_secret
             info['days'] = convert_time2days(int(time.time()), token.expire)
         else:
             info['authorize'] = False
@@ -36,7 +36,7 @@ class AuthorizeTokenAjaxHandler(BaseHandler):
         if not type:
             self.write(json.dumps({'errmsg': u'invalid request'}))
         else:
-            token = AccessToken.objects(member_id = self.user.member_id).first()
+            token = OAuthToken.objects(member_id = self.user.member_id).first()
             if token:
                 if type == 'update' and token.expire >= int(time.time()):
                     token.expire = int(time.time()) + 30*24*3600
@@ -49,11 +49,9 @@ class AuthorizeTokenAjaxHandler(BaseHandler):
                 else:
                     self.write(json.dumps({'errmsg': u'bad request'}))
             elif not token and type == 'add':
-                newtoken = AccessToken()
+                newtoken = OAuthToken()
                 newtoken.member_id = self.user.member_id
-                newtoken.set_access_token()
-                newtoken.set_refresh_token()
+                newtoken.set_client_secret()
                 newtoken.set_expire_time()
                 newtoken.save()
                 self.write(json.dumps({'msg': u'create token success'}))
-
