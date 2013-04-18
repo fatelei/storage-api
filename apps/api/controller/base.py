@@ -7,8 +7,8 @@ from tornado.web import RequestHandler
 from tornado.options import options
 
 from oauthserver.models.member import Member
-from utils.auth import Authenticator
-from utils.decorator import ExceptionHandler
+from api.utils.auth import Authenticator
+from api.utils.decorator import ExceptionHandler
 from api.allin import exceptions
 from api.allin.macro import HTTP_CODE
 

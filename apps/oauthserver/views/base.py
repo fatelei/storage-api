@@ -2,7 +2,7 @@
 #-*-coding: utf8-*-
 
 from tornado import web
-from models.member import Member
+from oauthserver.models.member import Member
 
 class BaseHandler(web.RequestHandler):
     def get_login_url(self):

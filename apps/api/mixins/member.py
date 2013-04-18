@@ -5,8 +5,8 @@ from oauthserver.models.member import Member
 from api.allin import exceptions
 
 class MemberMixin(object):
-	def api_member_change_password(self, password, re_password):
-		if not password or not re_password:
+    def api_member_change_password(self, password, re_password):
+        if not password or not re_password:
             raise exceptions.InvalidRequest('params error')
         if password != re_password:
             raise exceptions.InvalidRequest('password is not the same')

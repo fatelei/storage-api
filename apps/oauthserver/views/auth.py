@@ -4,10 +4,10 @@
 import logging
 
 from tornado import web
-from base import BaseHandler
-from models.member import Member
-from utils.macro import HTTP_CODE
-from utils import exceptions
+from oauthserver.views.base import BaseHandler
+from oauthserver.models.member import Member
+from oauthserver.utils.macro import HTTP_CODE
+from oauthserver.utils import exceptions
 
 class OAuthRegisterHandler(BaseHandler):
     def get(self):

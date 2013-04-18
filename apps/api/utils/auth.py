@@ -4,7 +4,7 @@
 import time
 
 from oauthserver.models.token import AccessToken
-from allin import exceptions
+from api.allin import exceptions
 
 class Authenticator(object):
     def validate(self):

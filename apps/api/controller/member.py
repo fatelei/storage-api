@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
-from base import BaseHandler
+from api.controller.base import BaseHandler
 from api.allin import exceptions
-from api.mixinx.member import MemberMixin
+from api.mixins.member import MemberMixin
 
 
 class MemberPwdChange(BaseHandler, MemberMixin):

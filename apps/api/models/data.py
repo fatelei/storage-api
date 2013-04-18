@@ -2,7 +2,7 @@
 #-*-coding: utf8-*-
 
 from mongoengine import Document, FileField, ListField, StringField, EmbeddedDocument,\
-						EmbeddedDocumentField
+						EmbeddedDocumentField, IntField
 
 class File(EmbeddedDocument):
 	filename = StringField(max_length = 40, required = 40)

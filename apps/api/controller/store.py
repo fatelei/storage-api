@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
-from base import BaseHandler
+from api.controller.base import BaseHandler
 from api.allin.macro import MACRO
 from api.mixins.store import FileMixin
 
@@ -19,4 +19,3 @@ class FileUploadHandler(BaseHandler, FileMixin):
 class FileRemoveHandler(BaseHandler, FileMixin):
     pass
 
-    
