@@ -8,7 +8,7 @@ from api.mixins.store import FileMixin
 class FilesHandler(BaseHandler, FileMixin):
     def real_get(self):
         offset = int(self.get_argument('offset', MACRO.ZERO))
-        pass
+        info = 
 
 class FileDownloadHandler(BaseHandler, FileMixin):
     pass
