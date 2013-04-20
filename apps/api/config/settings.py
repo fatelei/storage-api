@@ -13,3 +13,9 @@ SERVER = {
     'gzip': True,
     'debug': True
 }
+
+CACHE = {
+	'host': 'localhost',
+	'port': 6700,
+	'db': 0
+}
