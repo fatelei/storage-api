@@ -7,7 +7,7 @@ from api.mixins.store import FileMixin
 from api.allin import exceptions
 
 class FilesHandler(BaseHandler, FileMixin):
-    def real_get(self):
+    def real_get(self, *args, **kwargs):
         offset = int(self.get_argument('offset', MACRO.ZERO))
         return self.api_get_files_list(self.login_id, offset)
 
@@ -32,13 +32,29 @@ class FileUploadHandler(BaseHandler, FileMixin):
             raise exceptions.ParamsException(u"no data upload")
         if not content_type:
             raise exceptions.ParamsException(u"no content type")
-        info = self.api_upload_new_files(self.st_member_id)
+        info = self.api_upload_new_files(self.login_id, filename, data, content_type)
+        return info
 
 class FileRemoveHandler(BaseHandler, FileMixin):
     def real_delate(self, *args, **kwargs):
-        pass
+        filename = self.get_argument("filename", None)
+        if not filename:
+            raise exceptions.ParamsException(u"need filename")
+        info = self.api_delete_file(self.login_id, filename)
+        return info
 
 class FileUpdateHandler(BaseHandler, FileMixin):
     def real_put(self, *args, **kwargs):
+        filename = self.get_argument("filename", None)
+        if not filename:
+            raise exceptions.ParamsException(u"no filename")
+        new_filename = self.get_argument("new_filename", None)
+        if not new_filename:
+            raise exceptions.ParamsException(u"no new filename")
+        info = self.api_rename_file(self.login_id, filename, new_filename)
+        return info
+
+class FileSearchHandler(BaseHandler, FileMixin):
+    def real_get(self, *args, **kwargs):
         pass
 

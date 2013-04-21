@@ -18,7 +18,7 @@ class BaseHandler(RequestHandler, Authenticator):
         super(BaseHandler, self).__init__(application, request, **kwargs)
 
     def login_id(self):
-        return self.current_user.member_id if self.current_user else 0
+        return self.current_user.member_id if self.current_user else None
 
     def current_user(self):
         if self.st_member_id:
