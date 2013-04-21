@@ -4,4 +4,4 @@
 eggs
 develop-eggs
 bin
-
+*.conf

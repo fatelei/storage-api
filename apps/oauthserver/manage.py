@@ -4,12 +4,13 @@
 import tornado.ioloop
 
 from tornado.options import options
-from app import Application
-from urls import handlers
-from config.settings import SERVER
+
+from oauthserver.app import Application
+from oauthserver.urls import handlers
+from oauthserver.config.settings import SERVER
 
 def run():
-	options.parse_command_line()
+    options.parse_command_line()
     app = Application(handlers, **SERVER)
     app.listen(8888)
     tornado.ioloop.IOLoop.instance().start()

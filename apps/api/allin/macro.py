@@ -35,3 +35,7 @@ class STORAGE_CODE:
     FILE_NOT_BELONG = 7
     FILE_GET_OK = 8
     FILE_DELETE_OK = 9
+    FILE_CREATE_OK = 10
+
+PRE_SAVE_LOG_TEMPLATE = "Prepare save : {0}-{1}"
+POST_SAVE_LOG_TEMPLATE = "Post {0} : {1}-{2}"

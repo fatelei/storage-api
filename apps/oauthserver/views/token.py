@@ -5,11 +5,11 @@ import json
 import time
 
 from tornado import web
-from models.token import OAuthToken
-from views.base import BaseHandler
 from mongoengine import Q
 
-from utils.tools import convert_time2days
+from oauthserver.models.token import OAuthToken
+from oauthserver.views.base import BaseHandler
+from oauthserver.utils.tools import convert_time2days
 
 class AuthorizeTokenHandler(BaseHandler):
     @web.authenticated

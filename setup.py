@@ -4,10 +4,11 @@
 from setuptools import setup, find_packages
 
 install_requires = ['mongoengine',
-                    'tornado']
+                    'tornado',
+                    'blinker']
 
 entry_points = """
-	[console_script]
+	[console_scripts]
 	api=api.manage:run
 	oauth=oauthserver.manage:run
 """

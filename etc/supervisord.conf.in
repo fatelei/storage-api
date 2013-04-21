@@ -1,0 +1,26 @@
+[unix_http_server]
+file=${buildout:directory}/temp/supervisor.sock ; path to your socket file
+
+[supervisorctl]
+serverurl=unix://${buildout:directory}/temp/supervisor.sock ; use a unix:// URL for a unix socket
+
+[supervisord]
+logfile = ${buildout:directory}/log/supervisord.log
+logfile_maxbytes = 50MB
+logfile_backups = 10
+loglevel = info
+pidfile = ${buildout:directory}/temp/supervisord.pid
+nodaemon = false
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory=supervisor.rpcinterface:make_main_rpcinterface
+
+[program:oauth]
+command = ${buildout:directory}/bin/oauth
+stderr_logfile = ${buildout:directory}/log/oauth-stderr.log
+stdout_logfile = ${buildout:directory}/log/oauth-stdout.log
+
+[program:api]
+command = ${buildout:directory}/bin/api
+stderr_logfile = ${buildout:directory}/log/api-stderr.log
+stdout_logfile = ${buildout:directory}/log/api-stdout.log

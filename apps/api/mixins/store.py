@@ -6,7 +6,7 @@ from api.allin.macro import MACRO
 
 class FileMixin(object):
     def get_files_list(self, offset = MACRO.ZERO, limit = MACRO.DEFAULT_MAX_COUNT):
-        
+        pass
 
     def upload_new_files(self, member_id, data):
         pass

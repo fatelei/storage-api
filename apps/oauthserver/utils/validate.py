@@ -5,8 +5,8 @@ import exceptions
 import time
 import logging
 
-from models.member import Member
-from models.token import AccessToken, OAuthToken
+from oauthserver.models.member import Member
+from oauthserver.models.token import AccessToken, OAuthToken
 
 class TokenGenerator(object):
     def __init__(self, request):

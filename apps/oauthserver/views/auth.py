@@ -4,7 +4,7 @@
 import logging
 
 from tornado import web
-from oauthserver.views.base import BaseHandler
+from base import BaseHandler
 from oauthserver.models.member import Member
 from oauthserver.utils.macro import HTTP_CODE
 from oauthserver.utils import exceptions
@@ -25,7 +25,7 @@ class OAuthRegisterHandler(BaseHandler):
             err['msg'] = u"name or email or password can't be blank"
             self.render('register.html', err=err)
         else:
-            member = Member.objects(name=name, email=email).fisrt()
+            member = Member.objects(name=name, email=email).first()
             if member:
                 err['msg'] = u"该用户已被注册"
                 self.render('register.html', err=err)

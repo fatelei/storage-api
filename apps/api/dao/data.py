@@ -10,18 +10,19 @@ from api.models.data import File, Files
 
 def check_file_exists(member_id, filename):
     info = {}
-    f = File.objects(Q(member_id = member_id) & Q(filename = filename) & Q(is_delete = 0)).first()
+    f = Files.objects(Q(member_id = member_id) & Q(files__member_id = member_id) &\
+                      Q(files__filename = filename)).only("member_id").first()
     if not f:
         info['code'] = STORAGE_CODE.FILE_NOT_EXISTS
         info['exists'] = False
     else:
         info['code'] = STORAGE_CODE.FILE_IS_EXISTS
         info['exists'] = True
-    return info 
+    return info
 
 def get_files(member_id, offset, limit):
     info = []
-    member_files = Files.objects(member_id = member_id).first()
+    member_files = Files.objects(member_id = member_id).only("files").first()
     if not member_files:
         return info
     else:
@@ -32,7 +33,8 @@ def get_files(member_id, offset, limit):
         return info
 
 def download_file(member_id, filename):
-    files = Files.objects(member_id = member_id).first()
+    f = Files.objects(Q(member_id = member_id) & Q(files__member_id = member_id) &\
+                      Q(files__filename = filename)).first()
     info = {}
     if not files:
         info['code'] = STORAGE_CODE.MEMBER_NO_FILES
@@ -56,11 +58,27 @@ def download_file(member_id, filename):
 
 
 def upload_new_file(member_id, filename, data):
+    info = {}
+    f = File.objects(Q(member_id = member_id) & Q(filename = filename)).first()
+    if not f:    
+        new_file = File()
+        new_file.member_id = member_id
+        new_file.filename = filename
+        new_file.data.new_file()
+        new_file.data.write(data)
+        new_file.data.close()
+        files = Files.objects(member_id = member_id).update()
+        info['code'] = STORAGE_CODE.FILE_CREATE_OK
+        info['msg'] = u'file create successfully'
+        return info
+    else:
+        update_file_content(member_id, filename, data)
+
+
+def update_file_content(member_id, filename, data):
+    info = {}
     f = File.objects(Q(member_id = member_id))
 
-
-def update_file_content(member_id, filename):
-    pass
 
 def remove_file(member_id, filename):
     files = Files.objects(member_id = member_id).first()

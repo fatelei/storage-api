@@ -2,8 +2,8 @@
 #-*-coding: utf8-*-
 
 from tornado.web import url
-from views.auth import OAuthLoginHandler, OAuthLogoutHandler, OAuthRegisterHandler
-from views.token import AuthorizeTokenHandler, AuthorizeTokenAjaxHandler
+from oauthserver.views.auth import OAuthLoginHandler, OAuthLogoutHandler, OAuthRegisterHandler
+from oauthserver.views.token import AuthorizeTokenHandler, AuthorizeTokenAjaxHandler
 
 handlers = [
     url('/', OAuthLoginHandler, name='login'),
