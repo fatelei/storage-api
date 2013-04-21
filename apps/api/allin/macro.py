@@ -36,6 +36,9 @@ class STORAGE_CODE:
     FILE_GET_OK = 8
     FILE_DELETE_OK = 9
     FILE_CREATE_OK = 10
+    FILE_NO_SPACE = 11
+    FILE_UPDATE_OK = 12
+    FILE_NOT_DELETE =13
 
 PRE_SAVE_LOG_TEMPLATE = "Prepare save : {0}-{1}"
 POST_SAVE_LOG_TEMPLATE = "Post {0} : {1}-{2}"

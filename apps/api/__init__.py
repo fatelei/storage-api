@@ -7,3 +7,4 @@ from allin import *
 from controller import *
 from mixins import *
 from config import *
+from dao import *

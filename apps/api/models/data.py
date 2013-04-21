@@ -29,20 +29,23 @@ class File(EmbeddedDocument):
     }
 
 class Files(Document):
-    member_id = StringField(max_length = 40, required = True)
+    member_id = StringField(max_length = 40, required = True, unique = True)
     capacity = IntField(default = 5242880)
-    files = ListField(EmbeddedDocumentField(File))
+    files = ListField(EmbeddedDocumentField(File), default = list)
 
     @classmethod
     def pre_save(cls, sender, document, **kwargs):
-        if "created" in kwargs:
-            logging.info(POST_SAVE_LOG_TEMPLATE.format("save", document.member_id, document.capacity))
+        f = lambda x, y: x.data.length + y.data.length
+        old_capacity = document.capacity
+        if document.files and len(document.files) > 1:
+            cur_cost = reduce(f, document.files) 
         else:
-            f = lambda x, y: x.data.length + y.data.length
-            old_capacity = document.capacity
-            cur_cost = reduce(f, document.files)
-            document.capacity = old_capacity - cur_cost
-            logging.info(POST_SAVE_LOG_TEMPLATE.format("update", document.member_id, document.capacity))
+            if not document.files:
+                cur_cost = 0
+            else:
+                cur_cost = document.files[0].data.length
+        document.capacity = old_capacity - cur_cost
+        logging.info(POST_SAVE_LOG_TEMPLATE.format("save", document.member_id, document.capacity))
 
     meta = {
         'collection': 'member_files',

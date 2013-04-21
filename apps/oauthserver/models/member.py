@@ -8,10 +8,10 @@ from struct import pack
 from random import getrandbits
 
 class Member(Document):
-    member_id = StringField(max_length=40, required=True)
-    name = StringField(max_length=40, required=True, unique=True)
-    password = StringField(max_length=40, required=True)
-    email = EmailField(required=True, unique=True)
+    member_id = StringField(max_length = 40, required = True, unique = True)
+    name = StringField(max_length = 40, required = True, unique=True)
+    password = StringField(max_length = 40, required = True)
+    email = EmailField(required = True, unique = True)
 
     meta = {
         'collection': 'member',

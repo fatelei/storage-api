@@ -7,9 +7,9 @@ from uuid import uuid4
 from mongoengine import Document, StringField, IntField
 
 class OAuthToken(Document):
-    member_id = StringField(required=True, max_length=40)
-    client_secret = StringField(required=True, max_length=40)
-    expire = IntField(required=True, default=0)
+    member_id = StringField(required = True, max_length = 40, unique = True)
+    client_secret = StringField(required = True, max_length = 40)
+    expire = IntField(required = True, default = 0)
 
     def set_client_secret(self):
         self.client_secret = uuid4().get_hex()
@@ -26,7 +26,7 @@ class OAuthToken(Document):
 
 
 class AccessToken(Document):
-    member_id = StringField(required = True, max_length = 40)
+    member_id = StringField(required = True, max_length = 40, unique = True)
     access_token = StringField(required = True, max_length = 40)
     refresh_token = StringField(required = True, max_length = 40)
     expire = IntField(required = True, default = 0)
