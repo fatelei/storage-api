@@ -9,7 +9,7 @@ from urls import handlers
 from config.settings import SERVER
 
 def run():
-	options.parse_command_line()
+    options.parse_command_line()
     app = Application(handlers, **SERVER)
     app.listen(options.server_port)
     tornado.ioloop.IOLoop.instance().start()
