@@ -23,7 +23,7 @@ class TestMember(unittest.TestCase):
 
     def test_pwd_change(self):
         params = {"password": "123456", "re_password": "123456"}
-        resp, content = self.member.change_password(params)
+        resp, content = self.member.change_password(**params)
         self.assertEqual(int(resp['status']), 200)
 
 if __name__ == '__main__':

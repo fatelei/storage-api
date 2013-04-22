@@ -27,7 +27,7 @@ class StorageAPIClient(object):
     def __init__(self, api_url = '', token = None):
         self.api_url = api_url
         self.token = token
-        self.header = {
+        self.headers = {
             "Content-type": "application/x-www-form-urlencoded"
         }
 
@@ -41,8 +41,8 @@ class StorageAPIClient(object):
             body = params.encode("utf8")
         req_url = "/".join([self.api_url, req_url])
         if self.token:
-            self.header['Authorization'] = "bearer:%s" % self.token
-        resp, content = request(req_url, method, body, headers)
+            self.headers['Authorization'] = "bearer:%s" % self.token
+        resp, content = request(req_url, method, body, self.headers)
         data = loads(content)
         return resp, data
 

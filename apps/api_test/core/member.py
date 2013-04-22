@@ -8,5 +8,5 @@ class Member(StorageAPIClient):
         super(Member, self).__init__(*args, **kwargs)
 
     def change_password(self, **params):
-        return self.put("/member/pwdchange", **params)
+        return self.put("member/pwdchange", **params)
 
