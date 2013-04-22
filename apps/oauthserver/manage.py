@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
+import base_config
 import tornado.ioloop
 
 from tornado.options import options
