@@ -5,7 +5,8 @@ from setuptools import setup, find_packages
 
 install_requires = ['mongoengine',
                     'tornado',
-                    'blinker']
+                    'blinker',
+                    'ujson']
 
 entry_points = """
 	[console_scripts]
