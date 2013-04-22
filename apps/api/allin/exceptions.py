@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
-class StorageOauthException(Exception):
+class StorageOAuthException(Exception):
     def __init__(self, code = None, message = None):
         self.code = code
-        self.message = messae
+        self.message = message
 
     def __str__(self):
         return "Exception: code = %d, message = '%s'" % (self.code, self.message)
@@ -13,15 +13,15 @@ class StorageOauthException(Exception):
     def info(self):
         return {'error': {'code': self.code, 'message': self.message}}
 
-class InvalidRequest(StorageOauthException):
+class InvalidRequest(StorageOAuthException):
     def __init__(self, message = u'invalid request header or params'):
         super(InvalidRequest, self).__init__(code = 600, message = message)
 
-class InvalidToken(StorageOauthException):
+class InvalidToken(StorageOAuthException):
     def __init__(self, message = u'invalid token'):
         super(InvalidToken, self).__init__(code = 601, message = message)
 
-class InvalidClient(StorageOauthException):
+class InvalidClient(StorageOAuthException):
     def __init__(self, message = u'invalid client'):
         super(InvalidClient, self).__init__(code = 602, message = message)
 
@@ -33,6 +33,10 @@ class StorageApiException(Exception):
 
     def __str__(self):
         return "Exception: code = %d, message = '%s'" % (self.code, self.message)
+
+    @property
+    def info(self):
+        return {'error': {'code': self.code, 'message': self.message}}
 
 class BadRequest(StorageApiException):
     def __init__(self, message = u'invalid request'):

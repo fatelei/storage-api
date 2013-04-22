@@ -19,6 +19,7 @@ class TestMember(unittest.TestCase):
 
     def test_login(self):
         resp, content = self.oauth.basic_login()
+        print content
         self.assertEqual(int(resp['status']), 200)
 
     def test_pwd_change(self):

@@ -2,6 +2,7 @@
 #-*-coding: utf8-*-
 
 import time
+import logging
 
 from oauthserver.models.token import AccessToken
 from api.allin import exceptions
@@ -18,9 +19,10 @@ class Authenticator(object):
             info = {'member_id': client.member_id}
         else:
             raise exceptions.InvalidRequest
+        return info
 
     def _validate_bearer(self, value):
-        token = AccessToken.objects(access_token = value[0]).first()
+        token = AccessToken.objects(access_token = value).first()
         if not token:
             raise exceptions.InvalidRequest
         now = int(time.time())

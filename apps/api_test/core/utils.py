@@ -42,7 +42,7 @@ def urlencode(params):
     
 def loads(content):
     try:
-        data = ujson.loads(content)
+        data = json.loads(content)
     except Exception:
         data = {'error': u'数据返回格式错误'}
     return data
