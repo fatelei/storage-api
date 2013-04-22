@@ -2,4 +2,3 @@
 #-*-coding: utf8-*-
 
 from core import *
-from testcase import *

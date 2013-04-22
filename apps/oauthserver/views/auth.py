@@ -2,12 +2,14 @@
 #-*-coding: utf8-*-
 
 import logging
+import json
 
 from tornado import web
 from base import BaseHandler
 from oauthserver.models.member import Member
 from oauthserver.utils.macro import HTTP_CODE
 from oauthserver.utils import exceptions
+from oauthserver.utils.validate import TokenGenerator
 
 class OAuthRegisterHandler(BaseHandler):
     def get(self):
@@ -73,7 +75,7 @@ class OAuthForApiHandler(BaseHandler):
         try:
             token_generator = TokenGenerator(self)
             token_generator.validate()
-            info = token_generator.generate_response()
+            info = token_generator.grant_response()
         except exceptions.OAuthException, e:
             info = e.info
             self.set_status(HTTP_CODE.UNAUTHORIZED)

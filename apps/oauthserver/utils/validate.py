@@ -22,10 +22,10 @@ class TokenGenerator(object):
             raise exceptions.InvalidRequest('params error: no grant_type')
         if self.grant_type not in ['password']:
             raise exceptions.InvalidRequest('unsupport authorize method')
-        self._validate_client_secret()
         self._validate_email_password()
+        self._validate_client_secret()
 
-    def _validate_client_secret(self, client_secret):
+    def _validate_client_secret(self):
         if not self.member_id:
             raise exceptions.InvalidRequest('email or password is not correct')
         token = OAuthToken.objects(member_id = self.member_id).first()

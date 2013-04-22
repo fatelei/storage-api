@@ -13,7 +13,7 @@ from oauthserver.config.settings import SERVER
 def run():
     options.parse_command_line()
     app = Application(handlers, **SERVER)
-    app.listen(8888)
+    app.listen(options.oauth_server_port)
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == '__main__':
