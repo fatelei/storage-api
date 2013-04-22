@@ -2,6 +2,7 @@
 #-*-coding: utf8-*-
 
 import logging
+import functools
 
 from ujson import dumps
 
@@ -32,3 +33,12 @@ def ExceptionHandler(f):
         return self.finish(dumps(e.info))
     return wrapper
 
+def singleton(cls):
+    instances = {}
+    @functools.wraps(cls, ('__module__', '__name__'), {})
+    class _Wraped(cls):
+        def __new__(self, *args, **kwargs):
+            if cls not in instances:
+                instances[cls] = cls(*args, **kwargs)
+            return instances[cls]
+    return _Wraped

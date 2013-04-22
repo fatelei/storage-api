@@ -6,7 +6,9 @@ from setuptools import setup, find_packages
 install_requires = ['mongoengine',
                     'tornado',
                     'blinker',
-                    'ujson']
+                    'ujson',
+                    'redis-shard',
+                    'redis']
 
 entry_points = """
 	[console_scripts]

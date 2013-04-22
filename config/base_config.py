@@ -9,9 +9,6 @@ MONGODB = {
     'db': 'storage'
 }
 
-CACHE = [
-	{"host": "localhost", "port": 6701, "db": 0}
-]
 
 define('db', default=MONGODB['db'], help="mongodb name")
 define('host', default=MONGODB['host'], help="mongodb host")
