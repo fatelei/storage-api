@@ -2,7 +2,7 @@
 #-*-coding: utf8-*-
 
 import httplib2
-import ujson
+import json
 
 from urlparse import urlparse
 
