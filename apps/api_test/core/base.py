@@ -16,7 +16,7 @@ class StorageOAuthClient(object):
         }
 
     def basic_login(self):
-        body = urllib.urlencode({"grant_type": "password", "email": self..email,
+        body = urllib.urlencode({"grant_type": "password", "email": self.email,
                                  "password": self.password, "client_secret": self.client_secret})
         resp, content = request(self.oauth_url, method = "POST", body = body, headers = self.headers)
         content = loads(content)
