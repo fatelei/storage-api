@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
-class MemberTestMixin(StorageAPIClient, StorageOAuthClient):
-	def test_basic_login(self, email, password, client_secret):
-		
+from base import StorageAPIClient
+
+class Member(StorageAPIClient):
+    def __init__(self, *args, **kwargs):
+        super(Member, self).__init__(*args, **kwargs)
+
+    def change_password(self, **params):
+        return self.put("/member/pwdchange", **params)
+

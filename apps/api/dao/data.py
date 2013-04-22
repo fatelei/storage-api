@@ -28,10 +28,13 @@ class FileDAO:
         if not member_files:
             return info
         else:
+            total = len(member_files.files)
             files = member_files.files[offset: offset+limit: 1]
             for f in files:
                 if not f.is_delete:
                     info.append({'filename': f.filename, 'type': f.data.content_type, 'time': f.update_time})
+            info["pages"] = total
+            info["now_page"] = offset
             return info
 
     @classmethod
