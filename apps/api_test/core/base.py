@@ -38,7 +38,7 @@ class StorageAPIClient(object):
     def execute_request(self, path, method = 'GET', **params):
         params = urlencode(params)
         if method in ['GET', 'DELETE']:
-            req_url = "?".join(path, params)
+            req_url = "?".join([path, params])
             body = None
         else:
             req_url = path
