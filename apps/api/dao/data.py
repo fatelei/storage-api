@@ -25,20 +25,20 @@ class FileDAO:
 
     @classmethod
     def get_files(cls, member_id, offset, limit):
-        info = []
+        info = {}
         member_files, _ = Files.objects.only("files").get_or_create(member_id = member_id)
         if not member_files:
             return info
         else:
             total = len(member_files.files)
-            logging.warning(type(offset))
-            logging.warning(type(limit))
+            data = []
             files = member_files.files[offset: offset+limit: 1]
             for f in files:
                 if not f.is_delete:
-                    info.append({'filename': f.filename, 'type': f.data.content_type, 'time': f.update_time})
+                    data.append({'filename': f.filename, 'type': f.data.content_type, 'time': f.update_time})
             info["pages"] = total
             info["now_page"] = offset
+            info["data"] = data
             return info
 
     @classmethod
