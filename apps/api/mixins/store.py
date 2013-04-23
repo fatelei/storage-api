@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
+import logging
+
 from api.dao.data import FileDAO
 from api.allin.macro import MACRO
 

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
+import logging
+
 from mongoengine import Q
 
 from api.allin import exceptions
@@ -24,11 +26,13 @@ class FileDAO:
     @classmethod
     def get_files(cls, member_id, offset, limit):
         info = []
-        member_files, _ = Files.objects.only("files").get_or_create(member_id = member_id).first()
+        member_files, _ = Files.objects.only("files").get_or_create(member_id = member_id)
         if not member_files:
             return info
         else:
             total = len(member_files.files)
+            logging.warning(type(offset))
+            logging.warning(type(limit))
             files = member_files.files[offset: offset+limit: 1]
             for f in files:
                 if not f.is_delete:

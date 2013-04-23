@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
+import logging
+
 from api.controller.base import BaseHandler
 from api.allin.macro import MACRO
 from api.mixins.store import FileMixin
@@ -9,7 +11,7 @@ from api.allin import exceptions
 class FilesHandler(BaseHandler, FileMixin):
     def real_get(self, *args, **kwargs):
         offset = int(self.get_argument('offset', MACRO.ZERO))
-        return self.api_get_files_list(self.login_id, offset)
+        return self.api_get_files_list(offset = offset)
 
 class FileDownloadHandler(BaseHandler, FileMixin):
     def real_get(self, *args, **kwargs):
