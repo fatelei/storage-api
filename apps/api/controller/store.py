@@ -16,9 +16,9 @@ class FilesHandler(BaseHandler, FileMixin):
 class FileDownloadHandler(BaseHandler, FileMixin):
     def real_get(self, *args, **kwargs):
         info = {}
-        filename = self.get_argument("filename", None)
-        if filename:
-            info = self.api_download_file(filename)
+        filenames = self.get_argument("filenames", None)
+        if filenames:
+            info = self.api_download_file(filenames)
             return info
         else:
             raise exceptions.ParamsException
@@ -39,10 +39,10 @@ class FileUploadHandler(BaseHandler, FileMixin):
 
 class FileRemoveHandler(BaseHandler, FileMixin):
     def real_delete(self, *args, **kwargs):
-        filename = self.get_argument("filename", None)
-        if not filename:
+        filenames = self.get_argument("filenames", None)
+        if not filenames:
             raise exceptions.ParamsException(u"need filename")
-        info = self.api_delete_file(filename)
+        info = self.api_delete_file(filenames)
         return info
 
 class FileUpdateHandler(BaseHandler, FileMixin):

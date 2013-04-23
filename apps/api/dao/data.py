@@ -43,34 +43,28 @@ class FileDAO:
             return info
 
     @classmethod
-    def download_file(cls, member_id, filename):
+    def download_file(cls, member_id, filenames):
+        filenames = filenames.split(",")
         files = Files.objects(Q(member_id = member_id) & Q(files__member_id = member_id) &\
-                              Q(files__filename = filename)).only("files").first()
+                              Q(files__filename__in = filenames)).only("files").first()
         info = {}
-        if not files:
-            info['code'] = STORAGE_CODE.MEMBER_NO_FILES
-            info['msg'] = u'no current member'
-        elif len(files.files) == 0:
-            info['code'] = STORAGE_CODE.FILES_IS_EMPTY
-            info['msg'] = u'member has no files'
+        data = []
+        if not files or :
+            raise exceptions.BadRequest(u"current member no files")
         else:
             for f in files.files:
-                if f.filename == filename:
+                if f.filename in filenames:
                     if not f.is_delete:
                         info['code'] = STORAGE_CODE.FILE_GET_OK
                         info['data'] = f.data.read()
                         info['content_type'] = f.data.content_type
+                        data.append(info)
                     else:
-                        info['code'] = STORAGE_CODE.FILE_NOT_EXISTS
-                        info['msg'] = u'file is not exists'
-                    break
-            if 'data' not in info:
-                info['code'] = STORAGE_CODE.FILE_NOT_EXISTS
-                info['msg'] = u'file is not exists'
-        return info
+                        raise exceptions.BadRequest(u"file has been deleted")
+            return data
 
     @classmethod
-    def upload_new_file(cls, member_id, filename, data, content_type):
+    def upload_new_file(cls, member_id, filenames, data, content_type):
         info = {}
         flag = True
         files = Files.objects(member_id = member_id).first()
@@ -116,10 +110,10 @@ class FileDAO:
 
 
     @classmethod
-    def remove_file(cls, member_id, filename):
+    def remove_file(cls, member_id, filenames):
         files = Files.objects(member_id = member_id).first()
         info = {}
-        index = None
+        index = []
         remove_capacity = 0
         if not files:
             info['code'] = STORAGE_CODE.MEMBER_NO_FILES
@@ -129,14 +123,15 @@ class FileDAO:
             info['msg'] = u'member has no files'
         else:
             cur_capacity = files.capacity
+            filenames = filenames.split(",")
             for f in files.files:
-                if f.filename == filename:
-                    index = files.files.index(f)
+                if f.filename in filenames:
+                    index.append(files.files.index(f))
                     f.is_delete = 1
-                    remove_capacity = f.data.length
-                    break
+                    remove_capacity += f.data.length
             if index != None:
-                files.files.pop(index)
+                for i in index:
+                    files.files.pop(i)
                 files.capacity = capacity_on_fly(cur_capacity, remove_capacity, 'delete')
                 files.save()
                 info['code'] = STORAGE_CODE.FILE_DELETE_OK

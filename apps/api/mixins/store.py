@@ -19,12 +19,12 @@ class FileMixin(object):
         info = FileDAO.modify_file(self.login_id, filename, new_filename)
         return info
 
-    def api_delete_file(self, filename):
-        info = FileDAO.remove_file(self.login_id, filename)
+    def api_delete_file(self, filenames):
+        info = FileDAO.remove_file(self.login_id, filenames)
         return info
 
-    def api_download_file(self, filename):
-        info = FileDAO.download_file(self.login_id, filename)
+    def api_download_file(self, filenames):
+        info = FileDAO.download_file(self.login_id, filenames)
         return info
 
     def api_search_files(self, query):
