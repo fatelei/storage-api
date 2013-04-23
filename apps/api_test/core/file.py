@@ -13,6 +13,9 @@ class File(StorageAPIClient):
     def rename_file(self, **params):
         return self.put("member/files/rename", **params)
 
+    def download_file(self, **params):
+        return self.get("member/files/download", **params)
+
     def remove_file(self, **params):
         return self.delete("member/files/remove", **params)
 

@@ -20,12 +20,13 @@ class TestFile(unittest.TestCase):
         resp, content = self.file.get_files(offset = offset)
         self.assertEqual(int(resp['status']), 200)
 
-    @unittest.skip("skip")
     def test_download_files(self):
         filename = "test.txt"
         resp, content = self.file.download_file(filename = filename)
+        print content
         self.assertEqual(int(resp['status']), 200)
 
+    @unittest.skip("skip")
     def test_upload_files(self):
         register_openers()
         datagen, headers = multipart_encode({"data": open("test.txt", "rb"), "filename": "test.txt", "content_type": "text/plain"})
@@ -38,8 +39,6 @@ class TestFile(unittest.TestCase):
         except urllib2.HTTPError, e:
             code = e.code
             content = e.msg
-        print code
-        print content
         self.assertEqual(code, 200)
 
     @unittest.skip("skip")

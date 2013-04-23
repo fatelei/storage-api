@@ -18,7 +18,7 @@ class FileDownloadHandler(BaseHandler, FileMixin):
         info = {}
         filename = self.get_argument("filename", None)
         if filename:
-            info = self.api_download_file(self.login_id, filename)
+            info = self.api_download_file(filename)
             return info
         else:
             raise exceptions.ParamsException
@@ -44,7 +44,7 @@ class FileRemoveHandler(BaseHandler, FileMixin):
         filename = self.get_argument("filename", None)
         if not filename:
             raise exceptions.ParamsException(u"need filename")
-        info = self.api_delete_file(self.login_id, filename)
+        info = self.api_delete_file(filename)
         return info
 
 class FileUpdateHandler(BaseHandler, FileMixin):
@@ -55,7 +55,7 @@ class FileUpdateHandler(BaseHandler, FileMixin):
         new_filename = self.get_argument("new_filename", None)
         if not new_filename:
             raise exceptions.ParamsException(u"no new filename")
-        info = self.api_rename_file(self.login_id, filename, new_filename)
+        info = self.api_rename_file(filename, new_filename)
         return info
 
 class FileSearchHandler(BaseHandler, FileMixin):
