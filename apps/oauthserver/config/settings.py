@@ -9,7 +9,7 @@ SERVER = {
     'gzip': True,
     'debug': True,
     'cookie_secret': 'asdgasduhaioe7qehasdyua8hdeasjkdhysadhakjdh8dasd',
-    'xsrf_cookies': False,
+    'xsrf_cookies': True,
     'template_path': '%s/%s' % (BASE_DIR, 'templates'),
     'static_path': '%s/%s' % (BASE_DIR, 'static')
 }

@@ -7,9 +7,6 @@ import json
 from tornado import web
 from base import BaseHandler
 from oauthserver.models.member import Member
-from oauthserver.utils.macro import HTTP_CODE
-from oauthserver.utils import exceptions
-from oauthserver.utils.validate import TokenGenerator
 
 class OAuthRegisterHandler(BaseHandler):
     def get(self):
@@ -69,20 +66,4 @@ class OAuthLogoutHandler(BaseHandler):
         self.clear_cookie('user_id')
         self.redirect(self.reverse_url('login'))
 
-
-class OAuthForApiHandler(BaseHandler):
-    def post(self):
-        try:
-            token_generator = TokenGenerator(self)
-            token_generator.validate()
-            info = token_generator.grant_response()
-        except exceptions.OAuthException, e:
-            info = e.info
-            self.set_status(HTTP_CODE.UNAUTHORIZED)
-        except Exception, e:
-            logging.warning(e, exc_info = True)
-            info = exceptions.ServerError().info
-            self.set_status(HTTP_CODE.INTERNAL_SERVER_ERROR)
-        self.set_header("Content-Type", "application/json")
-        self.write(json.dumps(info))
 

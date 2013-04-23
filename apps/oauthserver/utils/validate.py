@@ -5,6 +5,8 @@ import exceptions
 import time
 import logging
 
+from mongoengine import Q
+
 from oauthserver.models.member import Member
 from oauthserver.models.token import AccessToken, OAuthToken
 
@@ -62,10 +64,14 @@ class TokenGenerator(object):
         return data
 
     def _grant_password_token(self):
-        access_token = AccessToken()
-        access_token.set_access_token()
-        access_token.set_refresh_token()
-        access_token.set_expire_time()
-        access_token.member_id = self.member_id
-        access_token.save()
-        return access_token
+        access_token = AccessToken.objects(Q(member_id = self.member_id) & Q(is_expired = 0)).first()
+        if not access_token:
+            new_token = AccessToken()
+            new_token.set_access_token()
+            new_token.set_refresh_token()
+            new_token.set_expire_time()
+            new_token.member_id = self.member_id
+            new_token.save()
+            return new_token
+        else:
+            raise exceptions.InvalidRequest(u"repeated request")
