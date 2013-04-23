@@ -43,8 +43,8 @@ class FileDAO:
 
     @classmethod
     def download_file(cls, member_id, filename):
-        f = Files.objects(Q(member_id = member_id) & Q(files__member_id = member_id) &\
-                          Q(files__filename = filename)).only("files").first()
+        files = Files.objects(Q(member_id = member_id) & Q(files__member_id = member_id) &\
+                              Q(files__filename = filename)).only("files").first()
         info = {}
         if not files:
             info['code'] = STORAGE_CODE.MEMBER_NO_FILES
@@ -53,10 +53,10 @@ class FileDAO:
             info['code'] = STORAGE_CODE.FILES_IS_EMPTY
             info['msg'] = u'member has no files'
         else:
-            for f in files:
+            for f in files.files:
                 if f.filename == filename:
                     if not f.is_delete:
-                        info['code'] = STORAGE_CODE.FILE_GET_OK()
+                        info['code'] = STORAGE_CODE.FILE_GET_OK
                         info['data'] = f.data.read()
                         info['content_type'] = f.data.content_type
                     else:
@@ -93,6 +93,7 @@ class FileDAO:
                 new_file.data.new_file()
                 new_file.data.write(data['data'][0]['body'])
                 new_file.data.close()
+                new_file.data.content_type = content_type
                 files.update(push__files = new_file)
                 files.reload()
                 files.save()
