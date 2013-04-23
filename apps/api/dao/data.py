@@ -8,6 +8,7 @@ from mongoengine import Q
 from api.allin import exceptions
 from api.allin.macro import STORAGE_CODE
 from api.models.data import File, Files
+from api.utils.tools import capacity_on_fly
 
 class FileDAO:
     @classmethod
@@ -73,36 +74,46 @@ class FileDAO:
         info = {}
         flag = True
         files = Files.objects(member_id = member_id).first()
-        for f in files.files:
-            if f.filename == filename:
-                flag = False
-                f.data.new_file()
-                f.data.write(data['data'][0]['body'])
-                f.data.content_type = content_type
-                f.data.close()
-                files.save()
-                info['code'] = STORAGE_CODE.FILE_UPDATE_OK
-                info['msg'] = u'file has been updated'
-                return info
-        if flag:
-            if len(data) < files.capacity:
-                new_file = File()
-                new_file.member_id = member_id
-                new_file.filename = filename
-                new_file.set_time()
-                new_file.data.new_file()
-                new_file.data.write(data['data'][0]['body'])
-                new_file.data.close()
-                new_file.data.content_type = content_type
-                files.update(push__files = new_file)
-                files.reload()
-                files.save()
-                info['code'] = STORAGE_CODE.FILE_CREATE_OK
-                info['msg'] = u'file create successfully'
-            else:
-                info['code'] = STORAGE_CODE.FILE_NO_SPACE
-                info['msg'] = u'no space for upload'
-            return info
+        if files:
+            cur_capacity = files.capacity
+            for f in files.files:
+                if f.filename == filename:
+                    flag = False
+                    old_length = f.data.length
+                    f.data.new_file()
+                    f.data.write(data['data'][0]['body'])
+                    f.data.content_type = content_type
+                    f.data.close()
+                    if old_length > f.data.length:
+                        files.capacity = capacity_on_fly(cur_capacity, (old_length - f.data.length), 'incr')
+                    else:
+                        files.capacity = capacity_on_fly(cur_capacity, (f.data.length - old_length), 'updata')
+                    files.save()
+                    info['code'] = STORAGE_CODE.FILE_UPDATE_OK
+                    info['msg'] = u'file has been updated'
+            if flag:
+                if len(data) < files.capacity:
+                    new_file = File()
+                    new_file.member_id = member_id
+                    new_file.filename = filename
+                    new_file.set_time()
+                    new_file.data.new_file()
+                    new_file.data.write(data['data'][0]['body'])
+                    new_file.data.close()
+                    new_file.data.content_type = content_type
+                    files.update(push__files = new_file)
+                    files.capacity = capacity_on_fly(cur_capacity, new_file.data.length, 'save')
+                    files.save()
+                    info['code'] = STORAGE_CODE.FILE_CREATE_OK
+                    info['msg'] = u'file create successfully'
+                else:
+                    info['code'] = STORAGE_CODE.FILE_NO_SPACE
+                    info['msg'] = u'no space for upload'
+        else:
+            info['code'] = STORAGE_CODE.MEMBER_NO_FILES
+            info['msg'] = u"member has no files"
+        return info
+
 
     @classmethod
     def remove_file(cls, member_id, filename):
@@ -117,16 +128,16 @@ class FileDAO:
             info['code'] = STORAGE_CODE.FILES_IS_EMPTY
             info['msg'] = u'member has no files'
         else:
+            cur_capacity = files.capacity
             for f in files.files:
                 if f.filename == filename:
                     index = files.files.index(f)
                     f.is_delete = 1
                     remove_capacity = f.data.length
                     break
-            if index:
+            if index != None:
                 files.files.pop(index)
-                cur_capacity = files.capacity
-                files.capacity = cur_capacity + remove_capacity
+                files.capacity = capacity_on_fly(cur_capacity, remove_capacity, 'delete')
                 files.save()
                 info['code'] = STORAGE_CODE.FILE_DELETE_OK
                 info['msg'] = u'file has already been deleted' 
@@ -137,7 +148,7 @@ class FileDAO:
 
     @classmethod
     def modify_file(cls, member_id, filename, new_filename):
-        files = Files.object(member_id = member_id).first()
+        files = Files.objects(member_id = member_id).first()
         info = {}
         if not files:
             info['code'] = STORAGE_CODE.MEMBER_NO_FILES

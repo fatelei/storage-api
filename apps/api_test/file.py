@@ -20,13 +20,14 @@ class TestFile(unittest.TestCase):
         resp, content = self.file.get_files(offset = offset)
         self.assertEqual(int(resp['status']), 200)
 
+    @unittest.skip("skip")
     def test_download_files(self):
         filename = "test.txt"
         resp, content = self.file.download_file(filename = filename)
         print content
         self.assertEqual(int(resp['status']), 200)
 
-    @unittest.skip("skip")
+    @unittest.skip("skip")    
     def test_upload_files(self):
         register_openers()
         datagen, headers = multipart_encode({"data": open("test.txt", "rb"), "filename": "test.txt", "content_type": "text/plain"})
@@ -47,13 +48,13 @@ class TestFile(unittest.TestCase):
         new_filename = 'new_test.txt'
         resp, content = self.file.rename_file(filename = filename, new_filename = new_filename)
         print resp
-        self.assertEqual(int(resp['status']), 201)
+        self.assertEqual(int(resp['status']), 200)
+    
 
-    @unittest.skip("skip")
     def test_remove_file(self):
         filename = 'test.txt'
         resp, content = self.file.remove_file(filename = filename)
-        print resp
+        print content
         self.assertEqual(int(resp['status']), 200)
 
     @unittest.skip("skip")

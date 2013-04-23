@@ -34,18 +34,7 @@ class Files(Document):
     files = ListField(EmbeddedDocumentField(File), default = list)
 
     @classmethod
-    def pre_save(cls, sender, document, **kwargs):
-        f = lambda x, y: x.data.length + y.data.length
-        old_capacity = document.capacity
-        if document.files and len(document.files) > 1:
-            cur_cost = reduce(f, document.files) 
-        else:
-            if not document.files:
-                cur_cost = 0
-            else:
-                logging.warning(document.files[0].data.length)
-                cur_cost = document.files[0].data.length
-        document.capacity = old_capacity - cur_cost
+    def post_save(cls, sender, document, **kwargs):
         logging.info(POST_SAVE_LOG_TEMPLATE.format("save", document.member_id, document.capacity))
 
     meta = {
@@ -56,4 +45,4 @@ class Files(Document):
     }
 
 
-signals.pre_save.connect(Files.pre_save, sender = Files)
+signals.pre_save.connect(Files.post_save, sender = Files)

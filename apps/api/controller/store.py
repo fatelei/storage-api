@@ -28,8 +28,6 @@ class FileUploadHandler(BaseHandler, FileMixin):
         filename = self.get_argument("filename", None)
         data = self.request.files
         content_type = self.get_argument("content_type", None)
-        logging.warning(filename)
-        logging.warning(content_type)
         if not filename:
             raise exceptions.ParamsException(u"filename is invalid")
         if not data:
@@ -40,7 +38,7 @@ class FileUploadHandler(BaseHandler, FileMixin):
         return info
 
 class FileRemoveHandler(BaseHandler, FileMixin):
-    def real_delate(self, *args, **kwargs):
+    def real_delete(self, *args, **kwargs):
         filename = self.get_argument("filename", None)
         if not filename:
             raise exceptions.ParamsException(u"need filename")
