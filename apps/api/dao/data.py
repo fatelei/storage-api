@@ -94,6 +94,7 @@ class FileDAO:
                 new_file.data.write(data['data'][0]['body'])
                 new_file.data.close()
                 files.update(push__files = new_file)
+                files.reload()
                 files.save()
                 info['code'] = STORAGE_CODE.FILE_CREATE_OK
                 info['msg'] = u'file create successfully'

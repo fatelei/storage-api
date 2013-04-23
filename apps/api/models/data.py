@@ -43,6 +43,7 @@ class Files(Document):
             if not document.files:
                 cur_cost = 0
             else:
+                logging.warning(document.files[0].data.length)
                 cur_cost = document.files[0].data.length
         document.capacity = old_capacity - cur_cost
         logging.info(POST_SAVE_LOG_TEMPLATE.format("save", document.member_id, document.capacity))

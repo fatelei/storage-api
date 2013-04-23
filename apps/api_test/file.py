@@ -22,7 +22,7 @@ class TestFile(unittest.TestCase):
 
     @unittest.skip("skip")
     def test_download_files(self):
-        filename = ''
+        filename = "test.txt"
         resp, content = self.file.download_file(filename = filename)
         self.assertEqual(int(resp['status']), 200)
 
@@ -44,15 +44,15 @@ class TestFile(unittest.TestCase):
 
     @unittest.skip("skip")
     def test_rename_file(self):
-        filename = ''
-        new_filename = ''
+        filename = 'test.txt'
+        new_filename = 'new_test.txt'
         resp, content = self.file.rename_file(filename = filename, new_filename = new_filename)
         print resp
         self.assertEqual(int(resp['status']), 201)
 
     @unittest.skip("skip")
     def test_remove_file(self):
-        filename = ''
+        filename = 'test.txt'
         resp, content = self.file.remove_file(filename = filename)
         print resp
         self.assertEqual(int(resp['status']), 200)
