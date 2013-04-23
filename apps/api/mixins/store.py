@@ -12,7 +12,7 @@ class FileMixin(object):
         return info
 
     def api_upload_new_files(self, filename, data, content_type):
-        info = FileDAO.update_new_file(self.login_id, filename, data, content_type)
+        info = FileDAO.upload_new_file(self.login_id, filename, data, content_type)
         return info
 
     def api_rename_file(self, filename, new_filename):

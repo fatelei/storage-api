@@ -77,7 +77,7 @@ class FileDAO:
             if f.filename == filename:
                 flag = False
                 f.data.new_file()
-                f.data.write(data)
+                f.data.write(data['data'][0]['body'])
                 f.data.content_type = content_type
                 f.data.close()
                 files.save()
@@ -91,7 +91,7 @@ class FileDAO:
                 new_file.filename = filename
                 new_file.set_time()
                 new_file.data.new_file()
-                new_file.data.write(data)
+                new_file.data.write(data['data'][0]['body'])
                 new_file.data.close()
                 files.update(push__files = new_file)
                 files.save()

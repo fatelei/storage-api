@@ -26,15 +26,17 @@ class FileDownloadHandler(BaseHandler, FileMixin):
 class FileUploadHandler(BaseHandler, FileMixin):
     def real_post(self, *args, **kwargs):
         filename = self.get_argument("filename", None)
-        data = self.get_argument("data", None)
+        data = self.request.files
         content_type = self.get_argument("content_type", None)
+        logging.warning(filename)
+        logging.warning(content_type)
         if not filename:
             raise exceptions.ParamsException(u"filename is invalid")
         if not data:
             raise exceptions.ParamsException(u"no data upload")
         if not content_type:
             raise exceptions.ParamsException(u"no content type")
-        info = self.api_upload_new_files(self.login_id, filename, data, content_type)
+        info = self.api_upload_new_files(filename, data, content_type)
         return info
 
 class FileRemoveHandler(BaseHandler, FileMixin):
