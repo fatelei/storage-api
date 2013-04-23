@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
-import ujson
+import json
+import logging
 
 from tornado.web import RequestHandler
 from tornado.options import options
@@ -17,9 +18,11 @@ class BaseHandler(RequestHandler, Authenticator):
     def __init__(self, application, request, **kwargs):
         super(BaseHandler, self).__init__(application, request, **kwargs)
 
+    @property
     def login_id(self):
         return self.current_user.member_id if self.current_user else None
 
+    @property
     def current_user(self):
         if self.st_member_id:
             member = Member.objects(member_id = self.st_member_id).first()
@@ -30,10 +33,11 @@ class BaseHandler(RequestHandler, Authenticator):
     def prepare(self):
         try:
             self.auth_info = self.validate()
-        except exceptions.StorageOauthException, e:
+        except exceptions.StorageOAuthException, e:
             self.set_status(HTTP_CODE.UNAUTHORIZED)
-            self.finish(ujson.dumps(e.info))
+            return self.finish(json.dumps(e.info))
         self.st_member_id = self.auth_info['member_id']
+
 
     def finish(self, chunk = None):
         self._chunk = chunk

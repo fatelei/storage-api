@@ -4,7 +4,7 @@
 import logging
 import functools
 
-from ujson import dumps
+from json import dumps
 
 from api.allin import exceptions
 from api.allin.macro import HTTP_CODE

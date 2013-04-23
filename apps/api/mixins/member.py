@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
+import logging
+
 from oauthserver.models.member import Member
 from api.allin import exceptions
 
 class MemberMixin(object):
     def api_member_change_password(self, password, re_password):
+        logging.warning(self.login_id)
         if not password or not re_password:
             raise exceptions.InvalidRequest('params error')
         if password != re_password:

@@ -22,6 +22,10 @@ class StorageOAuthClient(object):
         content = loads(content)
         return resp, content
 
+    def basic_logout(self, logout_url):
+        resp, content = request(logout_url, method = "POST", body = None, headers = self.headers)
+        content = loads(content)
+        return resp, content
 
 class StorageAPIClient(object):
     def __init__(self, api_url = '', token = None):

@@ -2,6 +2,8 @@
 #-*-coding: utf8-*-
 
 from api.controller.member import MemberPwdChange
+from api.controller.member import OAuthApiLoginHandler
+from api.controller.member import OAuthApiLogoutHandler
 from api.controller.store import FilesHandler
 from api.controller.store import FileDownloadHandler
 from api.controller.store import FileRemoveHandler
@@ -16,5 +18,7 @@ handlers = [
 	('/member/files/download', FileDownloadHandler),
 	('/member/files/rename', FileUpdateHandler),
 	('/member/files/remove', FileRemoveHandler),
-	('/member/files/search', FileSearchHandler)
+	('/member/files/search', FileSearchHandler),
+	('/member/login', OAuthApiLoginHandler),
+	('/member/logout/(\w+)', OAuthApiLogoutHandler)
 ]
