@@ -6,3 +6,4 @@ develop-eggs
 bin
 *.conf
 build
+*.txt

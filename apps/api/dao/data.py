@@ -73,7 +73,7 @@ class FileDAO:
             return data
 
     @classmethod
-    def upload_new_file(cls, member_id, filenames, data, content_type):
+    def upload_new_file(cls, member_id, filename, data, content_type):
         info = {}
         flag = True
         files = Files.objects(member_id = member_id).first()
@@ -101,7 +101,7 @@ class FileDAO:
                     new_file.filename = filename
                     new_file.set_time()
                     new_file.data.new_file()
-                    new_file.data.write(data['data'][0]['body'])
+                    new_file.data.write(cls.get_enctype_data(data['data'][0]['body']))
                     new_file.data.close()
                     new_file.data.content_type = content_type
                     files.update(push__files = new_file)
