@@ -39,6 +39,9 @@ class BaseHandler(RequestHandler, Authenticator):
         self.st_member_id = self.auth_info['member_id']
 
 
+    def limit_access(self):
+        pass
+
     def finish(self, chunk = None):
         self._chunk = chunk
         self.set_header("Content-Type", "application/json; charset=UTF-8")

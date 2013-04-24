@@ -7,6 +7,7 @@ install_requires = ['mongoengine',
                     'tornado',
                     'blinker',
                     'redis',
+                    'redis_shard',
                     'flask']
 
 entry_points = """

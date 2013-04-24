@@ -6,6 +6,7 @@ import logging
 import redis
 import json
 
+from redis_shard.shard import RedisShardAPI
 from hashlib import sha1
 from api.config.settings import CACHE
 from api.utils.decorator import singleton
@@ -13,11 +14,7 @@ from api.utils.decorator import singleton
 @singleton
 class Memcache(object):
     def __init__(self):
-        self._conn = [redis.Redis(**cfg) for cfg in CACHE]
-        self._N = len(self._conn)
-
-    def _pos(self, key):
-        return int(sha1(key.encode('utf-8')).hexdigest()[:8], 16) % self._N
+        self.shard = RedisShardAPI(CACHE)
 
     @staticmethod
     def cache_key(func, *args):
@@ -28,11 +25,12 @@ class Memcache(object):
             @functools.wraps(func)
             def fcall(obj, *args):
                 key = self.cache_key(func, *args)
-                rst = self._conn[self._pos(key)].get(key)
+                rst = self.shard.get(key)
                 logging.warning(key)
                 if not rst:
                     data = func(obj, *args)
-                    self._conn[self._pos(key)].setex(key, json.dumps(data), 3600)
+                    self.shard.set(key, json.dumps(data))
+                    self.shard.expire(key, 3600)
                     return data
                 return rst
             return fcall
@@ -40,7 +38,7 @@ class Memcache(object):
 
     def invalidate(self, func, *args):
         key = self.cache_key(func, *args)
-        self._conn[self._pos(key)].delete(key)
+        self.shard.delete(key)
 
 memcache = Memcache()
 
