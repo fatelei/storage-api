@@ -15,7 +15,6 @@ class TestFile(unittest.TestCase):
         self.file = File(api_url = config.API_URL, token = config.TOKEN)
         self.token = config.TOKEN
 
-    @unittest.skip("skip")
     def test_get_files(self):
         offset = 0
         resp, content = self.file.get_files(offset = offset)
@@ -50,7 +49,7 @@ class TestFile(unittest.TestCase):
         resp, content = self.file.rename_file(filename = filename, new_filename = new_filename)
         print resp
         self.assertEqual(int(resp['status']), 200)
-    
+
     @unittest.skip("skip")
     def test_remove_file(self):
         filenames = 'test.txt'
@@ -58,7 +57,7 @@ class TestFile(unittest.TestCase):
         print content
         self.assertEqual(int(resp['status']), 200)
 
-    
+
     def test_search_file(self):
         query = 'test'
         resp, content = self.file.search_file(query = query)

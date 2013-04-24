@@ -10,7 +10,7 @@ from api.allin.macro import STORAGE_CODE
 from api.models.data import File, Files
 from api.utils.tools import capacity_on_fly
 from api.utils.enctype import enctype_data
-from api.utils.cache import Memcache as mc
+from api.utils.cache import memcache as mc
 
 class FileDAO:
     @classmethod
@@ -35,6 +35,7 @@ class FileDAO:
         return info
 
     @classmethod
+    @mc.cache()
     def get_files(cls, member_id, offset, limit):
         info = {}
         member_files, _ = Files.objects.only("files").get_or_create(member_id = member_id)

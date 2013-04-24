@@ -5,5 +5,7 @@ eggs
 develop-eggs
 bin
 *.conf
+log
+temp
 build
 *.txt

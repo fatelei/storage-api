@@ -17,10 +17,24 @@ supervisor.rpcinterface_factory=supervisor.rpcinterface:make_main_rpcinterface
 
 [program:oauth]
 command = ${buildout:directory}/bin/oauth
+autostart = false
 stderr_logfile = ${buildout:directory}/log/oauth-stderr.log
 stdout_logfile = ${buildout:directory}/log/oauth-stdout.log
 
 [program:api]
 command = ${buildout:directory}/bin/api
+autostart = false
 stderr_logfile = ${buildout:directory}/log/api-stderr.log
 stdout_logfile = ${buildout:directory}/log/api-stdout.log
+
+[program:redis_01]
+autostart = false
+command = redis-server ${buildout:directory}/etc/redis_01.conf
+stderr_logfile = ${buildout:directory}/log/redis_01-stderr.log
+stdout_logfile = ${buildout:directory}/log/redis_01-stdout.log
+
+[program:redis_02]
+autostart = false
+command = redis-server ${buildout:directory}/etc/redis_02.conf
+stderr_logfile = ${buildout:directory}/log/redis_02-stderr.log
+stdout_logfile = ${buildout:directory}/log/redis_02-stdout.log
