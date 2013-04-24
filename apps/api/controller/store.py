@@ -58,5 +58,11 @@ class FileUpdateHandler(BaseHandler, FileMixin):
 
 class FileSearchHandler(BaseHandler, FileMixin):
     def real_get(self, *args, **kwargs):
-        pass
+        info = []
+        query = self.get_argument("query", None)
+        if not query:
+            return info
+        else:
+            info = self.api_search_files(query)
+            return info
 

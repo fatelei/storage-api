@@ -10,6 +10,7 @@ from api.allin.macro import STORAGE_CODE
 from api.models.data import File, Files
 from api.utils.tools import capacity_on_fly
 from api.utils.enctype import enctype_data
+from api.utils.cache import Memcache as mc
 
 class FileDAO:
     @classmethod
@@ -170,5 +171,12 @@ class FileDAO:
             return info
 
     @classmethod
-    def search_files(cls, query):
-        pass
+    def search_files(cls, member_id, query):
+        data = []
+        files = Files.objects(Q(member_id = member_id) & Q(files__filename__icontains = query)).only("files").first()
+        if not files:
+            return data
+        else:
+            for f in files.files:
+                data.append(f.filename)
+            return data

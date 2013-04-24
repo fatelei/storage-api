@@ -28,5 +28,6 @@ class FileMixin(object):
         return info
 
     def api_search_files(self, query):
-        pass
+        info = FileDAO.search_files(self.login_id, query)
+        return info
     

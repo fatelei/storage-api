@@ -20,5 +20,6 @@ handlers = [
 	('/member/files/remove', FileRemoveHandler),
 	('/member/files/search', FileSearchHandler),
 	('/member/login', OAuthApiLoginHandler),
-	('/member/logout/(\w+)', OAuthApiLogoutHandler)
+	('/member/logout/(\w+)', OAuthApiLogoutHandler),
+	('/mmember/files/search/(\w+)', FileSearchHandler)
 ]
