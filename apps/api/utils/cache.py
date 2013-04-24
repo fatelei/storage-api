@@ -4,6 +4,7 @@
 import functools
 import logging
 import redis
+import json
 
 from hashlib import sha1
 from api.config.settings import CACHE
@@ -27,12 +28,11 @@ class Memcache(object):
             @functools.wraps(func)
             def fcall(obj, *args):
                 key = self.cache_key(func, *args)
-                logging.warning(key)
                 rst = self._conn[self._pos(key)].get(key)
-                logging.warning(rst)
+                logging.warning(key)
                 if not rst:
                     data = func(obj, *args)
-                    self._conn[self._pos(key)].setex(key, data, 3600)
+                    self._conn[self._pos(key)].setex(key, json.dumps(data), 3600)
                     return data
                 return rst
             return fcall
@@ -40,7 +40,7 @@ class Memcache(object):
 
     def invalidate(self, func, *args):
         key = self.cache_key(func, *args)
-        self.shard.delete(key)
+        self._conn[self._pos(key)].delete(key)
 
 memcache = Memcache()
 

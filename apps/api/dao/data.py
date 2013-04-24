@@ -36,7 +36,7 @@ class FileDAO:
 
     @classmethod
     @mc.cache()
-    def get_files(cls, member_id, offset, limit):
+    def get_files(cls, member_id):
         info = {}
         member_files, _ = Files.objects.only("files").get_or_create(member_id = member_id)
         if not member_files:
@@ -44,12 +44,13 @@ class FileDAO:
         else:
             total = len(member_files.files)
             data = []
-            files = member_files.files[offset: offset+limit: 1]
+            files = member_files.files
             for f in files:
                 if not f.is_delete:
                     data.append({'filename': f.filename, 'type': f.data.content_type, 'time': f.update_time})
+                else:
+                    total -= 1
             info["pages"] = total
-            info["now_page"] = offset
             info["data"] = data
             return info
 
@@ -117,6 +118,7 @@ class FileDAO:
         else:
             info['code'] = STORAGE_CODE.MEMBER_NO_FILES
             info['msg'] = u"member has no files"
+        mc.invalidate(cls.get_files, member_id)
         return info
 
 

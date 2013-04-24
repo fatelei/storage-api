@@ -2,14 +2,21 @@
 #-*-coding: utf8-*-
 
 import logging
+import json
 
 from api.dao.data import FileDAO
 from api.allin.macro import MACRO
 
 class FileMixin(object):
     def api_get_files_list(self, offset = MACRO.ZERO, limit = MACRO.DEFAULT_MAX_COUNT):
-        info = FileDAO.get_files(self.login_id, offset, limit)
-        return info
+        info = FileDAO.get_files(self.login_id)
+        if info:
+            info = json.loads(info)
+            info['now_page'] = offset
+            info['data'] = info['data'][offset: offset + limit: 1]
+            return info
+        else:
+            return {}
 
     def api_upload_new_files(self, filename, data, content_type):
         info = FileDAO.upload_new_file(self.login_id, filename, data, content_type)
