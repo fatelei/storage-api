@@ -49,3 +49,4 @@ class OAuthApiLogoutHandler(web.RequestHandler):
 			self.write(json.dumps({"success": True}))
 		else:
 			raise exceptions.InvalidRequest(u"user has been logout")
+
