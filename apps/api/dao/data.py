@@ -9,8 +9,17 @@ from api.allin import exceptions
 from api.allin.macro import STORAGE_CODE
 from api.models.data import File, Files
 from api.utils.tools import capacity_on_fly
+from api.utils.enctype import enctype_data
 
 class FileDAO:
+    @classmethod
+    def get_enctype_data(cls, data):
+        from multiprocessing.pool import ThreadPool
+        pool = ThreadPool(processes = 1)
+        async_result = pool.apply_async(enctype_data, [data])
+        rst = async_result.get()
+        return rst
+
     @classmethod
     def check_file_exists(cls, member_id, filename):
         info = {}
@@ -49,14 +58,14 @@ class FileDAO:
                               Q(files__filename__in = filenames)).only("files").first()
         info = {}
         data = []
-        if not files or :
+        if not files:
             raise exceptions.BadRequest(u"current member no files")
         else:
             for f in files.files:
                 if f.filename in filenames:
                     if not f.is_delete:
                         info['code'] = STORAGE_CODE.FILE_GET_OK
-                        info['data'] = f.data.read()
+                        info['data'] = cls.get_enctype_data(f.data.read())
                         info['content_type'] = f.data.content_type
                         data.append(info)
                     else:
@@ -75,7 +84,7 @@ class FileDAO:
                     flag = False
                     old_length = f.data.length
                     f.data.new_file()
-                    f.data.write(data['data'][0]['body'])
+                    f.data.write(cls.get_enctype_data(data['data'][0]['body']))
                     f.data.content_type = content_type
                     f.data.close()
                     if old_length > f.data.length:

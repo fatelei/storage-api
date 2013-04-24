@@ -9,3 +9,4 @@ def capacity_on_fly(cur_capacity, delta_capacity, action):
     else:
         cur_capacity = cur_capacity + delta_capacity
     return cur_capacity
+
