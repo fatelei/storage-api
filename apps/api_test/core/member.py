@@ -10,3 +10,4 @@ class Member(StorageAPIClient):
     def change_password(self, **params):
         return self.put("member/pwdchange", **params)
 
+

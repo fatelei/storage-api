@@ -1,9 +1,19 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
-from flask import Flask
+import tornado.ioloop
 
-from demo import server_config
+from tornado.options import options
+from tornado.web import Application
 
-app = Flask(__name__, static_url_path = server_config.static_url_path, static_folder = server_config.static_folder, template_folder = server_config.template_folder)
-app.config.from_object("demo.server_config")
+from demp.urls import handlers
+from demo.settings import SERVER
+
+def run():
+    options.parse_command_line()
+    app = Application(handlers, **SERVER)
+    app.listen(1314)
+    tornado.ioloop.IOLoop.instance().start()
+
+if __name__ == '__main__':
+    run()

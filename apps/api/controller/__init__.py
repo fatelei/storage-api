@@ -3,4 +3,4 @@
 
 from base import BaseHandler
 from store import *
-from member import MemberPwdChange
+from member import *

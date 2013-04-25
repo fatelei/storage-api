@@ -58,3 +58,8 @@ class RegisterHandler(BaseHandler, MemberMixin):
         password = self.get_argument("password", None)
         info = self.api_member_register(name, email, password)
         return info
+
+class MemberInfoHandler(BaseHandler, MemberMixin):
+    def real_get(self):
+        info = self.api_member_info()
+        return info
