@@ -8,11 +8,12 @@ import logging
 from mongoengine import Q
 
 from oauthserver.models.member import Member
-from oauthserver.models.token import AccessToken, OAuthToken
+from oauthserver.models.token import AccessToken, OAuthClient
 
 class TokenGenerator(object):
     def __init__(self, request):
         self.grant_type = request.get_argument('grant_type', None)
+        self.client_key = request.get_argument('client_key', None)
         self.client_secret = request.get_argument('client_secret', None)
         self.email = request.get_argument('email', None)
         self.password = request.get_argument('password', None)
@@ -24,19 +25,17 @@ class TokenGenerator(object):
             raise exceptions.InvalidRequest('params error: no grant_type')
         if self.grant_type not in ['password']:
             raise exceptions.InvalidRequest('unsupport authorize method')
-        self._validate_email_password()
         self._validate_client_secret()
+        self._validate_email_password()
 
     def _validate_client_secret(self):
-        if not self.member_id:
-            raise exceptions.InvalidRequest('email or password is not correct')
-        token = OAuthToken.objects(member_id = self.member_id).first()
-        if not token:
-            raise exceptions.InvalidRequest("you don't have authorize")
-        if token.expire < int(time.time()):
-            raise exceptions.InvalidRequest("you client secret has expired!")
-        if token.client_secret != self.client_secret:
-            raise exceptions.InvalidRequest('token is wrong')
+        if self.client_key:
+            self.client = OAuthClient.objects(Q(client_key = self.client_key) & Q(expire__gt = int(time.time()))).first()
+        else:
+            raise exceptions.InvalidRequest("missing client key")
+        if self.client:
+            if self.client.client_secret != self.client_secret:
+                raise exceptions.InvalidRequest('client secret is wrong')
 
     def _validate_email_password(self):
         if not self.email:

@@ -4,6 +4,7 @@
 from api.controller.member import MemberPwdChange
 from api.controller.member import OAuthApiLoginHandler
 from api.controller.member import OAuthApiLogoutHandler
+from api.controller.member import RegisterHandler
 from api.controller.store import FilesHandler
 from api.controller.store import FileDownloadHandler
 from api.controller.store import FileRemoveHandler
@@ -21,5 +22,6 @@ handlers = [
 	('/member/files/search', FileSearchHandler),
 	('/member/login', OAuthApiLoginHandler),
 	('/member/logout/(\w+)', OAuthApiLogoutHandler),
+	('/member/register', RegisterHandler),
 	('/mmember/files/search/(\w+)', FileSearchHandler)
 ]

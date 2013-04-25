@@ -3,7 +3,10 @@
 
 import unittest
 import config
+import httplib2
+import urllib
 
+from core.utils import urlencode
 from core.member import Member
 from core.base import StorageOAuthClient
 
@@ -13,8 +16,9 @@ class TestMember(unittest.TestCase):
         self.password = config.PASSWORD        
         self.token = config.TOKEN
         self.client_secret = config.CLIENT_SECRET
+        self.client_key = config.CLIENT_KEY
         self.oauth = StorageOAuthClient(oauth_url = config.LOGIN_URL, email = self.email,
-                                        password = self.password, client_secret = self.client_secret)
+                                        password = self.password, client_secret = self.client_secret, client_key = self.client_key)
         self.member = Member(api_url = config.API_URL, token = self.token)
 
     def test_login(self):
@@ -31,6 +35,16 @@ class TestMember(unittest.TestCase):
     def test_member_logout(self):
         logout_url = "%s/member/logout/%s" % (config.API_URL, self.token)
         resp, content = self.oauth.basic_logout(logout_url)
+        self.assertEqual(int(resp['status']), 200)
+
+    @unittest.skip("skip")
+    def test_member_register(self):
+        register_url = '%s/member/register' % (config.API_URL)
+        post_data = {"name": "test", "email": "test@test.com", "password": "123456"}
+        body = urlencode(post_data)
+        headers = {"Authorization": "oauth:%s" % config.CLIENT_KEY, "Content-type": "application/x-www-form-urlencoded"}
+        http = httplib2.Http()
+        resp, response = http.request(register_url, method="POST", body = body, headers = headers)
         self.assertEqual(int(resp['status']), 200)
 
 if __name__ == '__main__':

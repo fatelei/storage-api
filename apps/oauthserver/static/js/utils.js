@@ -127,8 +127,8 @@ Utils.render_table = function (data) {
     var obj = this;
     var html = '';
     html += '<table class="table">';
-    html += '<thead><tr><th>Token</th><th>Left</th><th>Update</th><th>Delete</th></tr></thead>';
-    html += '<tbody><tr><td>' + data.info.token + '</td>';
+    html += '<thead><tr><th>Key</th><th>Token</th><th>Left</th><th>Update</th><th>Delete</th></tr></thead>';
+    html += '<tbody><tr><td>' + data.info.key + '</td><td>' + data.info.token + '</td>';
     html += '<td>' + data.info.days + '</td>'
     html += '<td><form class="form-inline">' + csrf;
     html += '<button class="btn btn-info" id="update" type="button">Refresh</button></form></td>';

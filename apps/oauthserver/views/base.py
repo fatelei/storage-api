@@ -2,7 +2,7 @@
 #-*-coding: utf8-*-
 
 from tornado import web
-from oauthserver.models.member import Member
+from oauthserver.models.token import OAuthClient
 
 class BaseHandler(web.RequestHandler):
     def get_login_url(self):
@@ -13,9 +13,9 @@ class BaseHandler(web.RequestHandler):
         return self.get_current_user()
 
     def get_current_user(self):
-        user_id = self.get_secure_cookie('user_id')
-        if user_id:
-            user = Member.objects(member_id=user_id).first()
-            return user
+        email = self.get_secure_cookie('email')
+        if email:
+            client = OAuthClient.objects(email = email).first()
+            return client
         else:
             return None

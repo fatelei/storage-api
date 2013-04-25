@@ -2,6 +2,7 @@
 #-*-coding: utf8-*-
 
 import json
+import logging
 
 from tornado import web
 from mongoengine import Q
@@ -50,3 +51,10 @@ class OAuthApiLogoutHandler(web.RequestHandler):
 		else:
 			raise exceptions.InvalidRequest(u"user has been logout")
 
+class RegisterHandler(BaseHandler, MemberMixin):
+    def real_post(self):
+        name = self.get_argument("name", None)
+        email = self.get_argument("email", None)
+        password = self.get_argument("password", None)
+        info = self.api_member_register(name, email, password)
+        return info

@@ -6,7 +6,7 @@ import json
 
 from tornado import web
 from base import BaseHandler
-from oauthserver.models.member import Member
+from oauthserver.models.token import OAuthClient
 
 class OAuthRegisterHandler(BaseHandler):
     def get(self):
@@ -24,15 +24,14 @@ class OAuthRegisterHandler(BaseHandler):
             err['msg'] = u"name or email or password can't be blank"
             self.render('register.html', err=err)
         else:
-            member = Member.objects(name=name, email=email).first()
-            if member:
+            client = OAuthClient.objects(name=name, email=email).first()
+            if client:
                 err['msg'] = u"该用户已被注册"
                 self.render('register.html', err=err)
             else:
-                member = Member(name=name, email=email)
-                member.set_password(password)
-                member.generate_member_id()
-                member.save()
+                client = OAuthClient(name=name, email=email)
+                client.set_password(password)
+                client.save()
                 self.redirect(self.reverse_url('login'))
 
 
@@ -50,9 +49,9 @@ class OAuthLoginHandler(BaseHandler):
         if not email and not password:
             err['msg'] = u"email or password can't be blank"
             self.render('login.html', err=err)
-        member = Member.objects(email = email).first()
-        if member and member.check_password(password):
-            self.set_secure_cookie('user_id', member.member_id)
+        client = OAuthClient.objects(email = email).first()
+        if client and client.check_password(password):
+            self.set_secure_cookie('email', client.email)
             self.redirect(self.reverse_url('token'))
         else:
             err['msg'] = u'poassword is invalid'
@@ -63,7 +62,7 @@ class OAuthLoginHandler(BaseHandler):
 class OAuthLogoutHandler(BaseHandler):
     @web.authenticated
     def get(self):
-        self.clear_cookie('user_id')
+        self.clear_cookie('email')
         self.redirect(self.reverse_url('login'))
 
 

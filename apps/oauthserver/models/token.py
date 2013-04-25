@@ -5,11 +5,42 @@ import time
 
 from uuid import uuid4
 from mongoengine import Document, StringField, IntField
+from hashlib import sha1
+from struct import pack
+from random import getrandbits
 
-class OAuthToken(Document):
-    member_id = StringField(required = True, max_length = 40, unique = True)
-    client_secret = StringField(required = True, max_length = 40)
+class OAuthClient(Document):
+    name = StringField(required = True, max_length = 40, unique = True)
+    email = StringField(required = True, max_length = 40, unique = True)
+    password = StringField(required = True, max_length = 40)
+    client_key = StringField(max_length = 40, default = None)
+    client_secret = StringField(max_length = 40, default = None)
     expire = IntField(required = True, default = 0)
+
+    def encryption(self, password):
+        if isinstance(password, unicode):
+            password = password.encode('utf8')
+        salt = pack('I', getrandbits(32))
+        digest = sha1(password + salt).digest()
+        return (salt + digest).encode('base64')
+
+    def set_password(self, password):
+        self.password = self.encryption(password)
+
+    def check_password(self, password):
+        if isinstance(password, unicode):
+            password = password.encode('utf8')
+        old_password = self.password.decode('base64')
+        if len(old_password) != 24:
+            return False
+        salt = old_password[:4]
+        digest = old_password[4:]
+        if digest != sha1(password + salt).digest():
+            return False
+        return True
+
+    def set_client_key(self):
+        self.client_key = uuid4().get_hex()
 
     def set_client_secret(self):
         self.client_secret = uuid4().get_hex()
@@ -19,8 +50,8 @@ class OAuthToken(Document):
 
     meta = {
         'collection': 'oauthclient',
-        'indexes': ['member_id', 'client_secret'],
-        'shard_key': ('member_id',),
+        'indexes': ['email', 'client_key', 'client_secret'],
+        'shard_key': ('email',),
         'allow_inheritance': False
     }
 

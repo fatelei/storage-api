@@ -36,8 +36,8 @@ class BaseHandler(RequestHandler, Authenticator):
         except exceptions.StorageOAuthException, e:
             self.set_status(HTTP_CODE.UNAUTHORIZED)
             return self.finish(json.dumps(e.info))
-        self.st_member_id = self.auth_info['member_id']
-
+        if self.auth_info['type'] == 'three_leg':
+            self.st_member_id = self.auth_info['member_id']
 
     def limit_access(self):
         pass

@@ -6,18 +6,20 @@ import urllib
 from utils import urlencode, request, loads
 
 class StorageOAuthClient(object):
-    def __init__(self, oauth_url = '', email = '', password = '', client_secret = ''):
+    def __init__(self, oauth_url = '', email = '', password = '', client_secret = '', client_key = ''):
         self.oauth_url = oauth_url
         self.email = email
         self.password = password
         self.client_secret = client_secret
+        self.client_key = client_key
         self.headers = {
             'content-type': 'application/x-www-form-urlencoded',
         }
 
     def basic_login(self):
         body = urllib.urlencode({"grant_type": "password", "email": self.email,
-                                 "password": self.password, "client_secret": self.client_secret})
+                                 "password": self.password, "client_secret": self.client_secret,
+                                 "client_key": self.client_key})
         resp, content = request(self.oauth_url, method = "POST", body = body, headers = self.headers)
         content = loads(content)
         return resp, content
