@@ -13,7 +13,7 @@ class DemoLoginHandler(BaseHandler):
     def get(self):
         token = self.get_secure_cookie("access_token")
         if token:
-            self.write(token)
+            self.redirect(self.reverse_url("index"))
         else:
             self.render("login.html", err = {})
 
@@ -30,11 +30,13 @@ class DemoLoginHandler(BaseHandler):
         data = {"email": email, "password": password}
         resp, content = self.client.oauth_login(**data)
         content = json.loads(content)
+        logging.warning(content)
         if check_status(int(resp['status'])):
             self.set_secure_cookie("access_token", content['access_token'])
             self.write("ok")
         else:
-            self.render("login.html", err = content)
+            err['msg'] = content['error']['message']
+            self.render("login.html", err = err)
 
 class DemoLogoutHandler(BaseHandler):
     @web.authenticated
@@ -75,7 +77,8 @@ class DemoRegisterHandler(BaseHandler):
         if check_status(int(resp['status'])):
             self.redirect(self.reverse_url("login"))
         else:
-            self.render("register.html", err = content)
+            err['msg'] = content['error']['message']
+            self.render("register.html", err = err)
 
 class DemoPwdChangeHandler(BaseHandler):
     @web.authenticated
@@ -96,4 +99,5 @@ class DemoPwdChangeHandler(BaseHandler):
             if check_status(int(resp['status'])):
                 self.render("pwdchange.html", err = content)
             else:
-                self.render("pwdchange.html", err = content)
+                err['msg'] = content['error']['message']
+                self.render("pwdchange.html", err = err)
