@@ -27,7 +27,7 @@
         </div>
     </div>
 </div>
-<div class="token-background">
+<div>
     <div class="container">
         <section>
             <div class="authorize">
@@ -50,10 +50,8 @@
 {% block js %}
 <script type="text/javascript" src="{{static_url('js/utils.js')}}"></script>
 <script type="text/javascript">
-    var token = '{{reverse_url("tokenajax")}}';
     var csrf = '{% module xsrf_form_html() %}';
     $(document).ready(function () {
-        Utils.render_data(token);
         $('.dropdown-toggle').dropdown();
     });
 </script>
