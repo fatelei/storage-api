@@ -4,13 +4,13 @@
 import httplib2
 import urllib
 
-from demo import api_config
+from demo import settings
 
 class APIClient(object):
     def __init__(self):
-        self.client_key = api_config.CLIENT_KEY
-        self.client_secret = api_config.CLIENT_SECRET
-        self.api_url = api_config.API_DOMAIN
+        self.client_key = settings.CLIENT_KEY
+        self.client_secret = settings.CLIENT_SECRET
+        self.api_url = settings.API_DOMAIN
         self.headers = {"Content-Type": "application/x-www-form-urlencoded"}
         self.http = httplib2.Http()
 
@@ -19,14 +19,14 @@ class APIClient(object):
                        "client_secret": self.client_secret})
         post_data = urllib.urlencode(params)
         req_url = "%s/member/login" % self.api_url
-        response = self.http.request(req_url, method = "POST", body = body, headers = self.headers)
+        response = self.http.request(req_url, method = "POST", body = post_data, headers = self.headers)
         return response
 
     def oauth_register(self, **params):
         self.headers['Authorization'] = "oauth:%s" % self.client_key
         post_data = urllib.urlencode(params)
         req_url = "%s/member/register" % self.api_url
-        response = self.http.request(req_url, method = "POST", body = body, headers = self.headers)
+        response = self.http.request(req_url, method = "POST", body = post_data, headers = self.headers)
         return response
 
     def oauth_logout(self, **params):

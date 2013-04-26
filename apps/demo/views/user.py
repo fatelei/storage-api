@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
+import logging
+import json
+
 from tornado import web
 
 from demo.views.base import BaseHandler
@@ -25,10 +28,11 @@ class DemoLoginHandler(BaseHandler):
             err['msg'] = u'no password'
             self.render("login.html", err = err)
         data = {"email": email, "password": password}
-        resp, content = self.client.oauth_login(data)
+        resp, content = self.client.oauth_login(**data)
+        content = json.loads(content)
         if check_status(int(resp['status'])):
             self.set_secure_cookie("access_token", content['access_token'])
-            self.set_secure_cookie("name", content["name"])
+            self.write("ok")
         else:
             self.render("login.html", err = content)
 
@@ -36,19 +40,22 @@ class DemoLogoutHandler(BaseHandler):
     @web.authenticated
     def get(self):
         token = self.get_secure_cookie("access_token")
-        resp, content = self.client.oauth_logout({"access_token": token})
+        data = {"access_token": token}
+        resp, content = self.client.oauth_logout(**data)
         if check_status(int(resp['status'])):
-            self.clear_all_cookie()
+            self.clear_all_cookies()
             self.redirect(self.reverse_url("login"))
         else:
             self.write(content)
 
 class DemoRegisterHandler(BaseHandler):
-    @web.authenticated
     def get(self):
-        self.render("register.html", err = {})
+        token = self.get_secure_cookie("access_token")
+        if token:
+            self.redirect()
+        else:
+            self.render("register.html", err = {})
 
-    @web.authenticated
     def post(self):
         name = self.get_argument("name", None)
         email = self.get_argument("email", None)

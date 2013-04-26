@@ -6,7 +6,7 @@ import tornado.ioloop
 from tornado.options import options
 from tornado.web import Application
 
-from demp.urls import handlers
+from demo.urls import handlers
 from demo.settings import SERVER
 
 def run():
