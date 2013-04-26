@@ -54,7 +54,7 @@ class DemoRegisterHandler(BaseHandler):
     def get(self):
         token = self.get_secure_cookie("access_token")
         if token:
-            self.redirect()
+            self.redirect(self.reverse_url("index"))
         else:
             self.render("register.html", err = {})
 
@@ -96,6 +96,7 @@ class DemoPwdChangeHandler(BaseHandler):
         else:
             data = {'password': password, 're_password': re_password}
             resp, content = self.client.api_put("member/pwdchange", **data)
+            content = json.loads(content)
             if check_status(int(resp['status'])):
                 self.render("pwdchange.html", err = content)
             else:
