@@ -7,13 +7,13 @@ install_requires = ['mongoengine',
                     'tornado',
                     'blinker',
                     'redis',
-                    'redis_shard',
-                    'flask']
+                    'redis_shard']
 
 entry_points = """
 	[console_scripts]
 	api=api.manage:run
 	oauth=oauthserver.manage:run
+	demo=demo.app:run
 """
 
 setup(

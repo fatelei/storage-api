@@ -19,14 +19,19 @@ class APIClient(object):
                        "client_secret": self.client_secret})
         post_data = urllib.urlencode(params)
         req_url = "%s/member/login" % self.api_url
-        response = self.http.request(req_url, method = "POST", body = body, headers = headers)
+        response = self.http.request(req_url, method = "POST", body = body, headers = self.headers)
         return response
 
     def oauth_register(self, **params):
         self.headers['Authorization'] = "oauth:%s" % self.client_key
         post_data = urllib.urlencode(params)
         req_url = "%s/member/register" % self.api_url
-        response = self.http.request(req_url, method = "POST", body = body, headers = headers)
+        response = self.http.request(req_url, method = "POST", body = body, headers = self.headers)
+        return response
+
+    def oauth_logout(self, **params):
+        req_url = "%s/member/logout/%s" % (self.api_url, params['access_token'])
+        response = self.http.request(req_url, method = 'POST', body = None, headers = self.headers)
         return response
 
     def execute_request(self, path, access_token, method = 'GET', **params):

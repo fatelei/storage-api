@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
+from tornado import web
+
 from demo.views.base import BaseHandler
-from demo.settings import CORRECT_HTTP_CODE
+from demo.utils.tools import check_status
 
 class DemoLoginHandler(BaseHandler):
     def get(self):
         token = self.get_secure_cookie("access_token")
         if token:
-            pass
+            self.write(token)
         else:
             self.render("login.html", err = {})
 
@@ -24,26 +26,67 @@ class DemoLoginHandler(BaseHandler):
             self.render("login.html", err = err)
         data = {"email": email, "password": password}
         resp, content = self.client.oauth_login(data)
-        if int(resp['status']) in CORRECT_HTTP_CODE:
+        if check_status(int(resp['status'])):
             self.set_secure_cookie("access_token", content['access_token'])
             self.set_secure_cookie("name", content["name"])
         else:
             self.render("login.html", err = content)
 
 class DemoLogoutHandler(BaseHandler):
-    def post(self):
-        pass
+    @web.authenticated
+    def get(self):
+        token = self.get_secure_cookie("access_token")
+        resp, content = self.client.oauth_logout({"access_token": token})
+        if check_status(int(resp['status'])):
+            self.clear_all_cookie()
+            self.redirect(self.reverse_url("login"))
+        else:
+            self.write(content)
 
 class DemoRegisterHandler(BaseHandler):
+    @web.authenticated
     def get(self):
-        pass
+        self.render("register.html", err = {})
 
+    @web.authenticated
     def post(self):
-        pass
+        name = self.get_argument("name", None)
+        email = self.get_argument("email", None)
+        password = self.get_argument("password", None)
+        err = {'msg': ''}
+        if not name:
+            err['msg'] = u'missing name'
+            self.render("register.html", err = err)
+        if not email:
+            err['msg'] = u'missing email'
+            self.render("register.html", err = err)
+        if not password:
+            err['msg'] = u'missing password'
+            self.render("register.html", err = err)
+        data = {'name': name, 'email': email, 'password': password}
+        resp, content = self.client.oauth_register(**data)
+        if check_status(int(resp['status'])):
+            self.redirect(self.reverse_url("login"))
+        else:
+            self.render("register.html", err = content)
 
-class DemoPwdChange(BaseHandler):
+class DemoPwdChangeHandler(BaseHandler):
+    @web.authenticated
     def get(self):
-        pass
+        self.render("pwdchange.html", err = {})
 
+    @web.authenticated
     def post(self):
-        pass
+        password = self.get_argument("password", None)
+        re_password = self.get_argument("re_password", None)
+        err = {'msg': ''}
+        if password != re_password:
+            err['msg'] = u"password isn't the same"
+            self.render("pwdchange.html", err = err)
+        else:
+            data = {'password': password, 're_password': re_password}
+            resp, content = self.client.api_put("member/pwdchange", **data)
+            if check_status(int(resp['status'])):
+                self.render("pwdchange.html", err = content)
+            else:
+                self.render("pwdchange.html", err = content)
