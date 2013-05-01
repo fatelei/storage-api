@@ -46,7 +46,7 @@ class DemoFilesDownloadHandler(BaseHandler):
 class DemoFileUploadHandler(BaseHandler):
     @web.authenticated
     def post(self):
-        pass
+        print self.request.files
 
 class DemoFilesRemoveHandler(BaseHandler):
     @web.authenticated

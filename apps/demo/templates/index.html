@@ -52,7 +52,7 @@
             <h3 id="upLabel">Upload File</h3>
         </div>
         <div class="modal-body">
-            <form class="form-horizontal" onsubmit="upload_file();">
+            <form class="form-horizontal">
                 {% module xsrf_form_html() %}
                 <div class="control-group">
                     <label class="control-label" for="uploadFile">File Choose:</label>
@@ -93,6 +93,7 @@
         $('#upload').bind('click', function () {
             $('#upload-modal').modal();
         });
+        render_user_files();
     });
 </script>
 {% end %}
