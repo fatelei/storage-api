@@ -112,10 +112,10 @@ class AdminTokensAjaxHandler(BaseHandler):
             new_client.set_client_secret()
             new_client.set_client_key()
             new_client.save()
-            info['msg'] = u'your apply has been approved!'
+            info['msg'] = u'this apply has been approved!'
         elif action == 'refuse':
             apply_token.apply_status = 2
             apply_token.is_done = 1
             apply_token.save()
-            info['msg'] = u'your apply has been refused!'
+            info['msg'] = u'this apply has been refused!'
         self.write(json.dumps(info))

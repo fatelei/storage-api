@@ -13,7 +13,7 @@ class FileMixin(object):
         if info:
             info = json.loads(info)
             info['now_page'] = offset
-            info['data'] = info['data'][offset: offset + limit: 1]
+            info['data'] = info['data'][(offset - 1)*limit: offset*limit: 1]
             return info
         else:
             return {}

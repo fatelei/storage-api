@@ -16,7 +16,6 @@ class DemoIndexHandler(BaseHandler):
         token = self.get_secure_cookie("access_token")
         resp, content = self.client.api_get("member/info", token)
         content = json.loads(content)
-        print content
         if check_status(int(resp['status'])):
             self.set_secure_cookie("name", content['name'])
             self.render("index.html", user = content)
@@ -27,7 +26,17 @@ class DemoIndexHandler(BaseHandler):
 class DemoFilesHandler(BaseHandler):
     @web.authenticated
     def get(self):
-        pass
+        offset = int(self.get_argument('offset', 1))
+        token = self.get_secure_cookie("access_token")
+        params = {'offset': offset}
+        resp, content = self.client.api_get("member/files", token, **params)
+        err = {'msg': ''}
+        print content
+        if check_status(int(resp['status'])):
+            self.write(content)
+        else:
+            err['msg'] = content['error']['message']
+            self.write(json.dumps(err))
 
 class DemoFilesDownloadHandler(BaseHandler):
     @web.authenticated

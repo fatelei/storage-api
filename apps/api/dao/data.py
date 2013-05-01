@@ -50,7 +50,7 @@ class FileDAO:
                     data.append({'filename': f.filename, 'type': f.data.content_type, 'time': f.update_time})
                 else:
                     total -= 1
-            info["pages"] = total
+            info["totalpage"] = total
             info["data"] = data
             return info
 
