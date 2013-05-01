@@ -30,7 +30,7 @@ class TokenGenerator(object):
 
     def _validate_client_secret(self):
         if self.client_key:
-            self.client = OAuthClient.objects(Q(client_key = self.client_key) & Q(expire__gt = int(time.time()))).first()
+            self.client = OAuthClient.objects(client_key = self.client_key).first()
         else:
             raise exceptions.InvalidRequest("missing client key")
         if self.client:

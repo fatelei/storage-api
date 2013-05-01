@@ -15,3 +15,8 @@ SERVER = {
 }
 
 
+APPLY_STATUS = {
+    0: "<span class='label label-info'>applying</span>",
+    1: "<span class='label label-success'>apply success</span>",
+    2: "<span class='label label-error'>apply failed</span>"
+}

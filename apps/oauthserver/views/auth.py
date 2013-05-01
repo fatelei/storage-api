@@ -6,7 +6,7 @@ import json
 
 from tornado import web
 from base import BaseHandler
-from oauthserver.models.token import OAuthClient
+from oauthserver.models.token import OAuthMember
 
 class OAuthRegisterHandler(BaseHandler):
     def get(self):
@@ -24,13 +24,14 @@ class OAuthRegisterHandler(BaseHandler):
             err['msg'] = u"name or email or password can't be blank"
             self.render('register.html', err=err)
         else:
-            client = OAuthClient.objects(name=name, email=email).first()
+            client = OAuthMember.objects(name=name, email=email).first()
             if client:
                 err['msg'] = u"该用户已被注册"
                 self.render('register.html', err=err)
             else:
-                client = OAuthClient(name=name, email=email)
+                client = OAuthMember(name=name, email=email)
                 client.set_password(password)
+                client.set_member_id()
                 client.save()
                 self.redirect(self.reverse_url('login'))
 
@@ -49,20 +50,23 @@ class OAuthLoginHandler(BaseHandler):
         if not email and not password:
             err['msg'] = u"email or password can't be blank"
             self.render('login.html', err=err)
-        client = OAuthClient.objects(email = email).first()
+        client = OAuthMember.objects(email = email).first()
         if client and client.check_password(password):
             self.set_secure_cookie('email', client.email)
-            self.redirect(self.reverse_url('token'))
+            self.set_secure_cookie('role', str(client.role))
+            if client.role == 0:
+                self.redirect(self.reverse_url('token'))
+            else:
+                self.redirect(self.reverse_url('admin'))
         else:
             err['msg'] = u'poassword is invalid'
             self.render('login.html', err=err)
 
 
-
 class OAuthLogoutHandler(BaseHandler):
     @web.authenticated
     def get(self):
-        self.clear_cookie('email')
+        self.clear_all_cookies()
         self.redirect(self.reverse_url('login'))
 
 

@@ -36,7 +36,7 @@ class Authenticator(object):
             return token
 
     def _validate_two_leg(self, value):
-        client = OAuthClient.objects(Q(client_key = value) & Q(expire__gt = int(time.time()))).first()
+        client = OAuthClient.objects(client_key = value).first()
         if not client:
             raise exceptions.InvalidRequest(u"invalid client")
         return client

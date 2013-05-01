@@ -9,13 +9,18 @@ from hashlib import sha1
 from struct import pack
 from random import getrandbits
 
-class OAuthClient(Document):
+class OAuthMember(Document):
+    '''
+    for login oauthserver
+    '''
+    member_id = StringField(required = True, max_length = 40)
     name = StringField(required = True, max_length = 40, unique = True)
     email = StringField(required = True, max_length = 40, unique = True)
     password = StringField(required = True, max_length = 40)
-    client_key = StringField(max_length = 40, default = None)
-    client_secret = StringField(max_length = 40, default = None)
-    expire = IntField(required = True, default = 0)
+    role = IntField(default = 0) #0->normail user, 1->admin
+ 
+    def set_member_id(self):
+        self.member_id = uuid4().get_hex()
 
     def encryption(self, password):
         if isinstance(password, unicode):
@@ -39,24 +44,40 @@ class OAuthClient(Document):
             return False
         return True
 
+    meta = {
+        'collection': 'oauthmember',
+        'indexes': ['member_id', 'email'],
+        'shard_key': ('member_id', 'email'),
+        'allow_inheritance': False
+    }
+
+class OAuthClient(Document):
+    '''
+    for oauth client verify
+    '''
+    member_id = StringField(required = True, max_length = 40)
+    client_key = StringField(max_length = 40, default = None)
+    client_secret = StringField(max_length = 40, default = None)
+
     def set_client_key(self):
         self.client_key = uuid4().get_hex()
 
     def set_client_secret(self):
         self.client_secret = uuid4().get_hex()
 
-    def set_expire_time(self):
-        self.expire = int(time.time()) + 30*24*3600
 
     meta = {
         'collection': 'oauthclient',
-        'indexes': ['email', 'client_key', 'client_secret'],
-        'shard_key': ('email',),
+        'indexes': ['member_id', 'client_key', 'client_secret'],
+        'shard_key': ('member_id',),
         'allow_inheritance': False
     }
 
 
 class AccessToken(Document):
+    '''
+    for api visit
+    '''
     member_id = StringField(required = True, max_length = 40)
     access_token = StringField(required = True, max_length = 40)
     refresh_token = StringField(required = True, max_length = 40)
@@ -76,6 +97,24 @@ class AccessToken(Document):
     meta = {
         'collection': 'accesstoken',
         'indexes': ['member_id', 'access_token', 'refresh_token'],
+        'shard_key': ('member_id',),
+        'allow_inheritance': False
+    }
+
+
+class TokenApply(Document):
+    '''
+    for user apply for the right of api
+    '''
+    member_id = StringField(required = True, max_length = 40)
+    name = StringField(required = True, max_length = 40, unique = True)
+    description = StringField(required = True, max_length = 100)
+    apply_status = IntField() #0->applying, 1->finish apply, 2->refuse apply
+    is_done = IntField(default = 0) #stand for: whether the task has been done
+
+    meta = {
+        'collection': 'tokenapply',
+        'indexs': ['member_id', 'apply_status', 'is_done'],
         'shard_key': ('member_id',),
         'allow_inheritance': False
     }

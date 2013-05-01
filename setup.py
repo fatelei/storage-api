@@ -14,6 +14,7 @@ entry_points = """
 	api=api.manage:run
 	oauth=oauthserver.manage:run
 	demo=demo.app:run
+	create_admin=oauthserver.create_admin:run
 """
 
 setup(

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block css %}
+<link type="text/css" href="{{static_url('css/media-pager.css')}}" rel="stylesheet"/>
+{% end %}
 {% block content %}
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
@@ -20,7 +23,7 @@
                 </div>
                 <ul class="nav">
                     <li class="active">
-                        <a href="#">Token</a>
+                        <a href="#">Admin</a>
                     </li>
                 </ul>
             </div>
@@ -29,10 +32,22 @@
 </div>
 <div class="token-background">
     <div class="container">
-        <section>
-            <div class="authorize">
-            </div>        
-        </section>
+        <div class="data">
+            <table class="table" id="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Apply Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="media-pager">
+        </div>
     </div>
     <div id="info-modal" class="modal hide fate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
@@ -51,15 +66,14 @@
 </form>
 {% end %}
 {% block js %}
-<script type="text/javascript" src="{{static_url('js/utils.js')}}"></script>
+<script type="text/javascript" src="{{static_url('js/admin.js')}}"></script>
+<script type="text/javascript" src="{{static_url('js/jquery.pager.js')}}"></script>
 <script type="text/javascript">
-    var token = '{{reverse_url("tokenajax")}}';
-    var csrf = '';
+    var page = {"totalpage": 1, "page": 1};
+    var data_url = '{{reverse_url("adminajax")}}';
     $(document).ready(function () {
-        csrf = document.getElementsByName('_xsrf')[0].value;
-        Utils.build_data();
-        Utils.render_data(token);
         $('.dropdown-toggle').dropdown();
+        render_admin_data();
     });
 </script>
 {% end %}
