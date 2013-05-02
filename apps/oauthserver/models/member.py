@@ -12,7 +12,6 @@ class Member(Document):
     name = StringField(max_length = 40, required = True, unique=True)
     password = StringField(max_length = 40, required = True)
     email = EmailField(required = True, unique = True)
-    role = IntField
 
     meta = {
         'collection': 'member',
