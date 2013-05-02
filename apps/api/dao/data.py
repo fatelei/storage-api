@@ -22,15 +22,23 @@ class FileDAO:
         return rst
 
     @classmethod
+    def get_user_space(cls, member_id):
+        info = {}
+        f = Files.objects(member_id = member_id).only('capacity').first()
+        if f:
+            info['capacity'] = f.capacity
+            return info
+        else:
+            raise exceptions.BadRequest(u"no such user")
+
+    @classmethod
     def check_file_exists(cls, member_id, filename):
         info = {}
         f = Files.objects(Q(member_id = member_id) & Q(files__member_id = member_id) &\
                           Q(files__filename = filename)).only("member_id").first()
         if not f:
-            info['code'] = STORAGE_CODE.FILE_NOT_EXISTS
             info['exists'] = False
         else:
-            info['code'] = STORAGE_CODE.FILE_IS_EXISTS
             info['exists'] = True
         return info
 
@@ -67,54 +75,54 @@ class FileDAO:
             for f in files.files:
                 if f.filename in filenames:
                     if not f.is_delete:
-                        info['code'] = STORAGE_CODE.FILE_GET_OK
                         info['data'] = cls.get_enctype_data(f.data.read())
                         info['content_type'] = f.data.content_type
+                        info['filename'] = f.filename
                         data.append(info)
                     else:
                         raise exceptions.BadRequest(u"file has been deleted")
             return data
 
     @classmethod
-    def upload_new_file(cls, member_id, filename, data, content_type):
+    def upload_new_file(cls, member_id, data):
         info = {}
-        flag = True
         files = Files.objects(member_id = member_id).first()
         if files:
+            f = lambda x, y: len(x[0]['body']) + len(y[0]['body'])
+            need_space = reduce(f, data.values())
             cur_capacity = files.capacity
-            for f in files.files:
-                if f.filename == filename:
-                    flag = False
-                    old_length = f.data.length
-                    f.data.new_file()
-                    f.data.write(cls.get_enctype_data(data['data'][0]['body']))
-                    f.data.content_type = content_type
-                    f.data.close()
-                    if old_length > f.data.length:
-                        files.capacity = capacity_on_fly(cur_capacity, (old_length - f.data.length), 'incr')
-                    else:
-                        files.capacity = capacity_on_fly(cur_capacity, (f.data.length - old_length), 'updata')
-                    files.save()
-                    info['code'] = STORAGE_CODE.FILE_UPDATE_OK
-                    info['msg'] = u'file has been updated'
-            if flag:
-                if len(data) < files.capacity:
+            if need_space > cur_capacity:
+                raise exceptions.BadRequest(u"the space is not enough!")
+            for name, value in data.items():
+                has_file = files.objects(files__filename__exact = name).first()
+                if has_file:
+                    for f in files.files:
+                        if f.filename == name:
+                            old_length = f.data.length
+                            f.data.new_file()
+                            f.data.write(cls.get_enctype_data(value[0]['body']))
+                            f.data.content_type = value[0]['content_type']
+                            f.data.close()
+                            if old_length > f.data.length:
+                                files.capacity = capacity_on_fly(cur_capacity, (old_length - f.data.length), 'incr')
+                            else:
+                                files.capacity = capacity_on_fly(cur_capacity, (f.data.length - old_length), 'updata')
+                            files.save()
+                            break
+                else:
                     new_file = File()
                     new_file.member_id = member_id
-                    new_file.filename = filename
+                    new_file.filename = value[0]['filename']
                     new_file.set_time()
                     new_file.data.new_file()
-                    new_file.data.write(cls.get_enctype_data(data['data'][0]['body']))
+                    new_file.data.write(cls.get_enctype_data(value[0]['body']))
                     new_file.data.close()
-                    new_file.data.content_type = content_type
-                    files.update(push__files = new_file)
+                    new_file.data.content_type = value[0]['content_type']
+                    files.update(add_to_set__files = new_file)
                     files.capacity = capacity_on_fly(cur_capacity, new_file.data.length, 'save')
                     files.save()
-                    info['code'] = STORAGE_CODE.FILE_CREATE_OK
-                    info['msg'] = u'file create successfully'
-                else:
-                    info['code'] = STORAGE_CODE.FILE_NO_SPACE
-                    info['msg'] = u'no space for upload'
+                info['code'] = STORAGE_CODE.FILE_CREATE_OK
+                info['msg'] = u'file(s) uploaded successfully'
         else:
             info['code'] = STORAGE_CODE.MEMBER_NO_FILES
             info['msg'] = u"member has no files"
@@ -152,7 +160,7 @@ class FileDAO:
             else:
                 info['code'] = STORAGE_CODE.FILE_NOT_DELETE
                 info['msg'] = u'file delete failed'
-            return info
+        return info
 
     @classmethod
     def modify_file(cls, member_id, filename, new_filename):
@@ -171,7 +179,7 @@ class FileDAO:
                     return info
             info['code'] = STORAGE_CODE.FILE_NOT_EXISTS
             info['msg'] = u'file is not exists'
-            return info
+        return info
 
     @classmethod
     def search_files(cls, member_id, query):

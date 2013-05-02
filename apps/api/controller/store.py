@@ -25,16 +25,10 @@ class FileDownloadHandler(BaseHandler, FileMixin):
 
 class FileUploadHandler(BaseHandler, FileMixin):
     def real_post(self, *args, **kwargs):
-        filename = self.get_argument("filename", None)
         data = self.request.files
-        content_type = self.get_argument("content_type", None)
-        if not filename:
-            raise exceptions.ParamsException(u"filename is invalid")
         if not data:
             raise exceptions.ParamsException(u"no data upload")
-        if not content_type:
-            raise exceptions.ParamsException(u"no content type")
-        info = self.api_upload_new_files(filename, data, content_type)
+        info = self.api_upload_new_files(data)
         return info
 
 class FileRemoveHandler(BaseHandler, FileMixin):
@@ -66,3 +60,14 @@ class FileSearchHandler(BaseHandler, FileMixin):
             info = self.api_search_files(query)
             return info
 
+class FileIsExistsHandler(BaseHandler, FileMixin):
+    def real_get(self, *args, **kwargs):
+        filename = self.get_argument('filename', None)
+        if not filename:
+            return {'exists': False}
+        else:
+            return self.api_file_exists(filename)
+
+class FilesUsageHandler(BaseHandler, FileMixin):
+    def real_get(self, *args, **kwargs):
+        return self.api_file_usage()

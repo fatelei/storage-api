@@ -41,6 +41,6 @@ class MemberMixin(object):
     def api_member_info(self):
         member = Member.objects(member_id = self.login_id).only("name").first()
         if member:
-            return {"name": member.name}
+            return {"name": member.name, }
         else:
             raise exceptions.InvalidRequest(u"no such user")

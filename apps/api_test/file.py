@@ -30,7 +30,7 @@ class TestFile(unittest.TestCase):
     @unittest.skip("skip")
     def test_upload_files(self):
         register_openers()
-        datagen, headers = multipart_encode({"data": open("test.txt", "rb"), "filename": "test.txt", "content_type": "text/plain"})
+        datagen, headers = multipart_encode({"test.txt": open("test.txt", "rb")})
         headers["Authorization"] = "bearer:%s" % self.token
         request = urllib2.Request("%s/member/files/upload" % config.API_URL, datagen, headers)
         try:

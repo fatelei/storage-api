@@ -38,3 +38,10 @@ class FileMixin(object):
         info = FileDAO.search_files(self.login_id, query)
         return info
     
+    def api_file_exists(self, filename):
+        info = FileDAO.check_file_exists(self.login_id, filename)
+        return info
+
+    def api_file_usage(self):
+        info = FileDAO.get_user_space(self.login_id)
+        return info

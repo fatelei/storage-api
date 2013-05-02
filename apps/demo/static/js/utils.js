@@ -52,33 +52,23 @@ function render_files (data) {
 
 
 function upload_file() {
-    var files = document.getElementByNames('upload_file')[0].files;
-    if (files) {
-        for (var i = files.length; i++) {
-            start_send_data(files[i]);
-        }
-    }
+    var $file = $('#uploadFile');
+    var $form = $('#upload_file_form');
+    var $progress = $('.bar');
+    var up = new uploader($file.get(0),
+                          $form.get(0),
+                          progress: function (ev) {
+                              console.log('progress');
+                              $progress.css('width', ((ev.loaded/ev.total)*100+'%'));
+                          },
+                          error: function (ev) {
+                              console.log('error');
+                          },
+                          success: function (ev) {
+                              console.log('success');   
+                          }
+                        )
+    up.send();
     return false;
 }
 
-function start_send_data(file) {
-    var reader = new FileReader();
-    reader.readAsText(file, "utf-8");
-    reader.onprogress = update_progress;
-    reader.onload = loaded;
-    reader.onerror = upload_error;
-}
-
-function update_progress(evt) {
-    if (evt.lengthComputable) {
-        var loaded = (evt.loaded / evt.total);
-        if (loaded < 1) {
-
-        }
-    }
-}
-
-function loaded(evt) {
-    var filestring = evt.target.result;
-    console.log(evt.target);
-}

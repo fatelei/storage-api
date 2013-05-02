@@ -52,12 +52,12 @@
             <h3 id="upLabel">Upload File</h3>
         </div>
         <div class="modal-body">
-            <form class="form-horizontal">
+            <form class="form-horizontal" onsubmit="start_upload();" id="upload_file_form">
                 {% module xsrf_form_html() %}
                 <div class="control-group">
                     <label class="control-label" for="uploadFile">File Choose:</label>
                     <div class="controls">
-                        <input type="file" multiple="multiple" id="uploadFile" name="upload_file"/>
+                        <input type="file" multiple="multiple" id="uploadFile" name="files"/>
                     </div>
                 </div>
                 <div class="control-group">
@@ -81,13 +81,27 @@
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         </div>
     </div>
+    <div id="load-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="loadLabel" aria-hidden="true">
+        <div class="modal-header">
+            <h3 id="loadLabel">Uploading</h3>
+        </div>
+        <div class="modal-body">
+            <div class="progress progress-striped active">
+                <div class="bar"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+    </div>
 </div>
 {% end %}
 {% block js %}
 <script type="text/javascript" src="{{static_url('js/utils.js')}}"></script>
+<script type="text/javascript" src="{{static_url('js/uploader.js')}}"></script>
 <script type="text/javascript">
     var page = {'totalpage': 1, 'page': 1};
     var files_url = '{{reverse_url("files")}}';
+    var files_upload_url = '';
     $(document).ready(function () {
         $('.dropdown-toggle').dropdown();
         $('#upload').bind('click', function () {

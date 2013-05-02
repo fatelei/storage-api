@@ -12,6 +12,8 @@ from api.controller.store import FileRemoveHandler
 from api.controller.store import FileUpdateHandler
 from api.controller.store import FileUploadHandler
 from api.controller.store import FileSearchHandler
+from api.controller.store import FileIsExistsHandler
+from api.controller.store import FilesUsageHandler
 
 handlers = [
 	('/member/pwdchange', MemberPwdChange),
@@ -25,5 +27,7 @@ handlers = [
 	('/member/login', OAuthApiLoginHandler),
 	('/member/logout/(\w+)', OAuthApiLogoutHandler),
 	('/member/register', RegisterHandler),
-	('/mmember/files/search/(\w+)', FileSearchHandler)
+	('/member/files/search/(\w+)', FileSearchHandler),
+	('/member/files/exists', FileIsExistsHandler),
+	('/member/space', FilesUsageHandler)
 ]

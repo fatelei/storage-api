@@ -10,3 +10,4 @@ temp
 build
 *.txt
 *.rdb
+.DS_Store
