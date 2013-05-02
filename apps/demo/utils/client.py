@@ -47,8 +47,8 @@ class APIClient(object):
         response = self.http.request(path, method, body = body, headers = self.headers)
         return response
 
-    def upload_file(self, access_token, **params):
-        pass
+    def upload_file(self, access_token, header, **params):
+        self.headers['Content-Type'] = header
 
     def api_get(self, uri, access_token, **params):
         return self.execute_request(uri, access_token, 'GET', **params)

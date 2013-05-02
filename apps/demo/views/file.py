@@ -8,35 +8,26 @@ import os
 from tornado import web
 
 from demo.views.base import BaseHandler
-from demo.utils.tools import check_status
+from demo.utils.tools import render
 
 class DemoIndexHandler(BaseHandler):
+    @render
     @web.authenticated
     def get(self):
         token = self.get_secure_cookie("access_token")
         resp, content = self.client.api_get("member/info", token)
-        content = json.loads(content)
-        if check_status(int(resp['status'])):
-            self.set_secure_cookie("name", content['name'])
-            self.render("index.html", user = content)
-        else:
-            self.write(content)
+        return resp, content
 
 
 class DemoFilesHandler(BaseHandler):
+    @render
     @web.authenticated
     def get(self):
         offset = int(self.get_argument('offset', 1))
         token = self.get_secure_cookie("access_token")
         params = {'offset': offset}
         resp, content = self.client.api_get("member/files", token, **params)
-        err = {'msg': ''}
-        print content
-        if check_status(int(resp['status'])):
-            self.write(content)
-        else:
-            err['msg'] = content['error']['message']
-            self.write(json.dumps(err))
+        return resp, content
 
 class DemoFilesDownloadHandler(BaseHandler):
     @web.authenticated
@@ -44,10 +35,14 @@ class DemoFilesDownloadHandler(BaseHandler):
         pass
 
 class DemoFileUploadHandler(BaseHandler):
+    @render
     @web.authenticated
     def post(self):
+        token = self.get_secure_cookie("access_token")
         files = self.request.files
-        
+        header = self.request.headers['Content-Type']
+        resp, content = self.client.upload_file("member/files/upload", token, header, **files)
+        return resp, content
 
 class DemoFilesRemoveHandler(BaseHandler):
     @web.authenticated
