@@ -9,7 +9,6 @@ function go_to_click_page (click_num) {
 
 function render_user_files () {
     var visit_url = files_url + '?offset=' + page.page + '&x=' + Math.random();
-    console.log(visit_url);
     $.ajax({
         url: visit_url,
         type: 'GET',
@@ -19,7 +18,6 @@ function render_user_files () {
             return false;
         }
     }).done(function (data) {
-        console.log(data);
         page.page = data.page;
         page.totalpage = data.totalpage;
         $(".media-pager").pager({pagenumber: page.page,
@@ -53,7 +51,6 @@ function render_files (data) {
 
 
 function upload_files() {
-    console.log('start upload');
     var $file = $('#uploadFile');
     var $form = $('#upload_file_form');
     var $progress = $('.bar');
@@ -67,14 +64,19 @@ function upload_files() {
                                     $progress.css('width', ((ev.loaded/ev.total)*100+'%'));
                                 },
                                 error: function (ev) {
-                                    console.log(ev);
+                                    $('#load-modal').modal('hide');
                                     console.log('error');
                                 },
                                 success: function (ev) {
+                                    $('#upload-modal').modal('hide');
+                                    $('#load-modal').modal('hide');
+                                    render_user_files();
                                     console.log('success');   
                                 }
                             }
     );
+
+    $('#load-modal').modal();
     up.send();
     return false;
 }

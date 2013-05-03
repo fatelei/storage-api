@@ -11,8 +11,11 @@ class FileMixin(object):
     def api_get_files_list(self, offset = MACRO.ZERO, limit = MACRO.DEFAULT_MAX_COUNT):
         info = FileDAO.get_files(self.login_id)
         if info:
-            info = json.loads(info)
-            info['now_page'] = offset
+            try:
+                info = json.loads(info)
+            except:
+                pass
+            info['page'] = offset
             info['data'] = info['data'][(offset - 1)*limit: offset*limit: 1]
             return info
         else:

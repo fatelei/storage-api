@@ -81,7 +81,7 @@ function uploader(input, form, options) {
 		if($this.xhr.readyState == 4) {
 			console.log('done!');
 			if($this.xhr.status == 200) {
-				if($this.settings.success) $this.settings.success($this.xhr.responseText,ev);
+				if($this.settings.success) $this.settings.success($this.xhr.responseText, ev);
 				$this.input.value = '';
 			}
 			else {

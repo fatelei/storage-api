@@ -7,6 +7,7 @@ from mongoengine import Q
 
 from api.allin import exceptions
 from api.allin.macro import STORAGE_CODE
+from api.allin.macro import MACRO
 from api.models.data import File, Files
 from api.utils.tools import capacity_on_fly
 from api.utils.enctype import enctype_data
@@ -60,7 +61,7 @@ class FileDAO:
                     data.append({'filename': f.filename, 'type': f.data.content_type, 'time': f.update_time})
                 else:
                     total -= 1
-            info["totalpage"] = total
+            info["totalpage"] = total/MACRO.DEFAULT_MAX_COUNT if total%MACRO.DEFAULT_MAX_COUNT == 0 else total/MACRO.DEFAULT_MAX_COUNT + 1
             info["data"] = data
             return info
 
