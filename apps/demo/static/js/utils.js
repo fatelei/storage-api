@@ -75,9 +75,17 @@ function upload_files() {
                                 }
                             }
     );
-
     $('#load-modal').modal();
     up.send();
     return false;
 }
 
+function remove_files() {
+
+    return false;
+}
+
+function download_files() {
+    
+    return false;
+}
