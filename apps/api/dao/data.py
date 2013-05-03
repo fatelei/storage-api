@@ -51,6 +51,8 @@ class FileDAO:
             return info
         else:
             total = len(member_files.files)
+            if not total:
+                total = 1
             data = []
             files = member_files.files
             for f in files:
@@ -88,20 +90,21 @@ class FileDAO:
         info = {}
         files = Files.objects(member_id = member_id).first()
         if files:
-            f = lambda x, y: len(x[0]['body']) + len(y[0]['body'])
-            need_space = reduce(f, data.values())
+            length = lambda x: len(x['body'])
+            add = lambda x, y: x + y
+            need_space = reduce(add, map(length, data))
+            print need_space
             cur_capacity = files.capacity
             if need_space > cur_capacity:
                 raise exceptions.BadRequest(u"the space is not enough!")
-            for name, value in data.items():
-                has_file = files.objects(files__filename__exact = name).first()
+            for d in data:
+                has_file = Files.objects(Q(member_id = member_id) & Q(files__filename__exact = d['filename'])).first()
                 if has_file:
                     for f in files.files:
-                        if f.filename == name:
+                        if f.filename == d['filename']:
                             old_length = f.data.length
-                            f.data.new_file()
-                            f.data.write(cls.get_enctype_data(value[0]['body']))
-                            f.data.content_type = value[0]['content_type']
+                            f.data.new_file(content_type = d['content_type'])
+                            f.data.write(cls.get_enctype_data(d['body']))
                             f.data.close()
                             if old_length > f.data.length:
                                 files.capacity = capacity_on_fly(cur_capacity, (old_length - f.data.length), 'incr')
@@ -112,12 +115,12 @@ class FileDAO:
                 else:
                     new_file = File()
                     new_file.member_id = member_id
-                    new_file.filename = value[0]['filename']
+                    new_file.filename = d['filename']
                     new_file.set_time()
-                    new_file.data.new_file()
-                    new_file.data.write(cls.get_enctype_data(value[0]['body']))
+                    new_file.data.new_file(content_type = d['content_type'])
+                    print d['content_type']
+                    new_file.data.write(cls.get_enctype_data(d['body']))
                     new_file.data.close()
-                    new_file.data.content_type = value[0]['content_type']
                     files.update(add_to_set__files = new_file)
                     files.capacity = capacity_on_fly(cur_capacity, new_file.data.length, 'save')
                     files.save()

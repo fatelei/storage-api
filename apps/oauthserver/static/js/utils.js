@@ -103,7 +103,7 @@ Utils.render_form = function (data) {
     }
     html += '<div class="auth-form">';
     html += '<p>Input Apply Reason & Click Authorize button to auth</p>';
-    html += '<form>' + csrf;
+    html += '<form>';
     html += '<textarea rows="4" style="width:300px;" name="description"></textarea><br/>';
     html += '<input class="btn btn-primary btn-large" id="apply" type="button" value="Authorize"/>';
     html += '</form></div>';

@@ -40,14 +40,14 @@ function uploader(input, form, options) {
 	// Prep a single file for upload
 	this.singleSend = function(file){
 		var data = new FormData(this.form);
-		data.append(String($this.settings.prefix),file);
+		//data.append(String($this.settings.prefix),file);
 		$this.upload(data);
 	};
 
 	// Prepare all of the input files for upload
 	this.multiSend = function(files){
 		var data = new FormData(this.form);
-		for(var i = 0; i < files.length; i++) data.append(String($this.settings.prefix)+String(files[i].name), files[i]);
+		//for(var i = 0; i < files.length; i++) data.append(String($this.settings.prefix)+String(files[i].name), files[i]);
 		$this.upload(data);
 	};
 

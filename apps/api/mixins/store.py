@@ -18,8 +18,8 @@ class FileMixin(object):
         else:
             return {}
 
-    def api_upload_new_files(self, filename, data, content_type):
-        info = FileDAO.upload_new_file(self.login_id, filename, data, content_type)
+    def api_upload_new_files(self, data):
+        info = FileDAO.upload_new_file(self.login_id, data)
         return info
 
     def api_rename_file(self, filename, new_filename):

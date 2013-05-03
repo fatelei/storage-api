@@ -28,7 +28,7 @@ class FileUploadHandler(BaseHandler, FileMixin):
         data = self.request.files
         if not data:
             raise exceptions.ParamsException(u"no data upload")
-        info = self.api_upload_new_files(data)
+        info = self.api_upload_new_files(data['files'])
         return info
 
 class FileRemoveHandler(BaseHandler, FileMixin):

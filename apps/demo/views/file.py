@@ -5,14 +5,12 @@ import json
 import logging
 import os
 
-from tornado import web
-
 from demo.views.base import BaseHandler
-from demo.utils.tools import render
+from demo.utils.tools import render, authenticated
 
 class DemoIndexHandler(BaseHandler):
-    @render
-    @web.authenticated
+    @render("index.html")
+    @authenticated
     def get(self):
         token = self.get_secure_cookie("access_token")
         resp, content = self.client.api_get("member/info", token)
@@ -20,8 +18,8 @@ class DemoIndexHandler(BaseHandler):
 
 
 class DemoFilesHandler(BaseHandler):
-    @render
-    @web.authenticated
+    @render(None)
+    @authenticated
     def get(self):
         offset = int(self.get_argument('offset', 1))
         token = self.get_secure_cookie("access_token")
@@ -30,26 +28,26 @@ class DemoFilesHandler(BaseHandler):
         return resp, content
 
 class DemoFilesDownloadHandler(BaseHandler):
-    @web.authenticated
+    @authenticated
     def get(self):
         pass
 
 class DemoFileUploadHandler(BaseHandler):
-    @render
-    @web.authenticated
+    @render(None)
+    @authenticated
     def post(self):
         token = self.get_secure_cookie("access_token")
-        files = self.request.files
+        body = self.request.body
         header = self.request.headers['Content-Type']
-        resp, content = self.client.upload_file("member/files/upload", token, header, **files)
+        resp, content = self.client.upload_file("member/files/upload", token, header, body)
         return resp, content
 
 class DemoFilesRemoveHandler(BaseHandler):
-    @web.authenticated
+    @authenticated
     def post(self):
         pass
 
 class DemoFileRenameHandler(BaseHandler):
-    @web.authenticated
+    @authenticated
     def post(self):
         pass

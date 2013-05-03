@@ -9,6 +9,7 @@ function go_to_click_page (click_num) {
 
 function render_user_files () {
     var visit_url = files_url + '?offset=' + page.page + '&x=' + Math.random();
+    console.log(visit_url);
     $.ajax({
         url: visit_url,
         type: 'GET',
@@ -51,23 +52,29 @@ function render_files (data) {
 }
 
 
-function upload_file() {
+function upload_files() {
+    console.log('start upload');
     var $file = $('#uploadFile');
     var $form = $('#upload_file_form');
     var $progress = $('.bar');
     var up = new uploader($file.get(0),
                           $form.get(0),
-                          progress: function (ev) {
-                              console.log('progress');
-                              $progress.css('width', ((ev.loaded/ev.total)*100+'%'));
-                          },
-                          error: function (ev) {
-                              console.log('error');
-                          },
-                          success: function (ev) {
-                              console.log('success');   
-                          }
-                        )
+                            {
+                                multiple: true,
+                                url: files_upload_url,
+                                progress: function (ev) {
+                                    console.log('progress');
+                                    $progress.css('width', ((ev.loaded/ev.total)*100+'%'));
+                                },
+                                error: function (ev) {
+                                    console.log(ev);
+                                    console.log('error');
+                                },
+                                success: function (ev) {
+                                    console.log('success');   
+                                }
+                            }
+    );
     up.send();
     return false;
 }

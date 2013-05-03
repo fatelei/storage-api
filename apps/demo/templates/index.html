@@ -52,7 +52,7 @@
             <h3 id="upLabel">Upload File</h3>
         </div>
         <div class="modal-body">
-            <form class="form-horizontal" onsubmit="start_upload();" id="upload_file_form">
+            <form class="form-horizontal" method="POST" id="upload_file_form">
                 {% module xsrf_form_html() %}
                 <div class="control-group">
                     <label class="control-label" for="uploadFile">File Choose:</label>
@@ -98,14 +98,19 @@
 {% block js %}
 <script type="text/javascript" src="{{static_url('js/utils.js')}}"></script>
 <script type="text/javascript" src="{{static_url('js/uploader.js')}}"></script>
+<script type="text/javascript" src="{{static_url('js/jquery.pager.js')}}"></script>
 <script type="text/javascript">
     var page = {'totalpage': 1, 'page': 1};
     var files_url = '{{reverse_url("files")}}';
-    var files_upload_url = '';
+    var files_upload_url = '{{reverse_url("upload")}}';
     $(document).ready(function () {
         $('.dropdown-toggle').dropdown();
         $('#upload').bind('click', function () {
             $('#upload-modal').modal();
+        });
+        $('#start_upload').bind('click', function () {
+            upload_files();
+            return false;
         });
         render_user_files();
     });
