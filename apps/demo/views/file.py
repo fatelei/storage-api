@@ -13,8 +13,8 @@ class DemoIndexHandler(BaseHandler):
     @authenticated
     def get(self):
         token = self.get_secure_cookie("access_token")
-        resp, content = self.client.api_get("member/info", token)
-        return resp, content
+        response = self.client.api_get("member/info", token)
+        return response
 
 
 class DemoFilesHandler(BaseHandler):
@@ -24,8 +24,8 @@ class DemoFilesHandler(BaseHandler):
         offset = int(self.get_argument('offset', 1))
         token = self.get_secure_cookie("access_token")
         params = {'offset': offset}
-        resp, content = self.client.api_get("member/files", token, **params)
-        return resp, content
+        response = self.client.api_get("member/files", token, **params)
+        return response
 
 class DemoFilesDownloadHandler(BaseHandler):
     @authenticated
@@ -39,8 +39,8 @@ class DemoFileUploadHandler(BaseHandler):
         token = self.get_secure_cookie("access_token")
         body = self.request.body
         header = self.request.headers['Content-Type']
-        resp, content = self.client.upload_file("member/files/upload", token, header, body)
-        return resp, content
+        response = self.client.upload_file("member/files/upload", token, header, body)
+        return response
 
 class DemoFilesRemoveHandler(BaseHandler):
     @authenticated
@@ -48,6 +48,29 @@ class DemoFilesRemoveHandler(BaseHandler):
         pass
 
 class DemoFileRenameHandler(BaseHandler):
+    @render(None)
     @authenticated
     def post(self):
-        pass
+        filename = self.get_argument("filename", None)
+        if not filename:
+            return {'msg': u'no origin filename'}
+        new_filename = self.get_argument("new_filename", None)
+        if not new_filename:
+            return {'msg': u'no new filename'}
+        token = self.get_secure_cookie("access_token")
+        params = {'filename': filename, "new_filename": new_filename}
+        response = self.client.api_post("member/files/rename", token, **params)
+        return response 
+
+class DemoFileExistHandler(BaseHandler):
+    @render(None)
+    @authenticated
+    def post(self):
+        filename = self.get_argument("new_filename", None)
+        if filename:
+            token = self.get_secure_cookie("access_token")
+            params = {"filename": filename}
+            response = self.client.api_get("member/files/exists", token, **params)
+            return response
+        else:
+            return {'msg': u'need input filename'}
