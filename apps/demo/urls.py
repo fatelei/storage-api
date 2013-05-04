@@ -10,6 +10,8 @@ from demo.views.user import DemoRegisterHandler
 from demo.views.file import DemoIndexHandler
 from demo.views.file import DemoFilesHandler
 from demo.views.file import DemoFileUploadHandler
+from demo.views.file import DemoFileRenameHandler
+from demo.views.file import DemoFileExistHandler
 
 handlers = [
 	url("/", DemoLoginHandler, name = 'login'),
@@ -18,5 +20,7 @@ handlers = [
 	url("/demo/pwdchange", DemoPwdChangeHandler, name = 'pwdchange'),
 	url("/demo/index", DemoIndexHandler, name = 'index'),
 	url("/demo/files", DemoFilesHandler, name = 'files'),
-	url("/demo/files/upload", DemoFileUploadHandler, name = 'upload')
+	url("/demo/files/upload", DemoFileUploadHandler, name = 'upload'),
+	url("/demo/files/rename", DemoFileRenameHandler, name = 'rename'),
+	url("/demo/files/exists", DemoFileExistHandler, name = 'exists')
 ]

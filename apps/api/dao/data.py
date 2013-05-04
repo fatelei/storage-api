@@ -164,6 +164,7 @@ class FileDAO:
             else:
                 info['code'] = STORAGE_CODE.FILE_NOT_DELETE
                 info['msg'] = u'file delete failed'
+        mc.invalidate(cls.get_files, member_id)
         return info
 
     @classmethod
@@ -180,9 +181,11 @@ class FileDAO:
                     files.save()
                     info['code'] = STORAGE_CODE.FILE_UPDATE_OK
                     info['msg'] = u'rename file successfully'
+                    mc.invalidate(cls.get_files, member_id)
                     return info
             info['code'] = STORAGE_CODE.FILE_NOT_EXISTS
             info['msg'] = u'file is not exists'
+        mc.invalidate(cls.get_files, member_id)
         return info
 
     @classmethod

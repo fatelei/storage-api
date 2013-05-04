@@ -95,16 +95,22 @@
         <div class="modal-footer">
         </div>
     </div>
+    <div id="op-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="loadLabel" aria-hidden="true">
+    </div>
 </div>
 {% end %}
 {% block js %}
 <script type="text/javascript" src="{{static_url('js/utils.js')}}"></script>
 <script type="text/javascript" src="{{static_url('js/uploader.js')}}"></script>
 <script type="text/javascript" src="{{static_url('js/jquery.pager.js')}}"></script>
+<script type="text/javascript" src="{{static_url('js/rename.js')}}"></script>
 <script type="text/javascript">
     var page = {'totalpage': 1, 'page': 1};
     var files_url = '{{reverse_url("files")}}';
     var files_upload_url = '{{reverse_url("upload")}}';
+    var csrf_token = '{% module xsrf_form_html() %}';
+    var check_filename_exist_url = '{{reverse_url("exists")}}';
+    var rename_url = '{{reverse_url("rename")}}';
     $(document).ready(function () {
         $('.dropdown-toggle').dropdown();
         $('#upload').bind('click', function () {

@@ -16,10 +16,10 @@ def render(tpl):
             else:
                 status, content = response
                 content = json.loads(content)
-                err = {'msg': ''}
+                err = {'errmsg': ''}
                 if int(status['status']) not in CORRECT_HTTP_CODE:
                     if not tpl:
-                        err['msg'] = content['error']['message']
+                        err['errmsg'] = content['error']['message']
                         self.write(json.dumps(err))
                     else:
                         return self.render(tpl, err = err)

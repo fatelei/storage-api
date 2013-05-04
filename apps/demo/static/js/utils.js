@@ -41,7 +41,7 @@ function render_files (data) {
         html += '<span class="media-size"><strong>' + data[i].type + '</strong></span></div>';
         html += '<div class="accordion-inner"><ul class="media-op">';
         html += '<li><i class="icon-download"></i><a href="#">Download</a></li>';
-        html += '<li><i class="icon-pencil"></i><a href="#">Rename</a></li>'
+        html += '<li><i class="icon-pencil"></i><a href="#" onclick=\'return rename("' + data[i].filename + '");\'>Rename</a></li>';
         html += '<li class="media-divider"></li>';
         html += '<li><i class="icon-trash"></i><a href="#">Remove</a></li></ul>';
         html += '</div></div></div>';
@@ -80,12 +80,7 @@ function upload_files() {
     return false;
 }
 
-function remove_files() {
-
-    return false;
-}
-
-function download_files() {
-    
-    return false;
+function clear_attr(obj) {
+    $(obj).parent().parent().removeClass('error');
+    $($(obj).parent().children()[1]).remove();
 }

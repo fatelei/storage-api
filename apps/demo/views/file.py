@@ -59,7 +59,7 @@ class DemoFileRenameHandler(BaseHandler):
             return {'msg': u'no new filename'}
         token = self.get_secure_cookie("access_token")
         params = {'filename': filename, "new_filename": new_filename}
-        response = self.client.api_post("member/files/rename", token, **params)
+        response = self.client.api_put("member/files/rename", token, **params)
         return response 
 
 class DemoFileExistHandler(BaseHandler):
