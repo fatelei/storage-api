@@ -70,13 +70,13 @@ class FileDAO:
         filenames = filenames.split(",")
         files = Files.objects(Q(member_id = member_id) & Q(files__member_id = member_id) &\
                               Q(files__filename__in = filenames)).only("files").first()
-        info = {}
         data = []
         if not files:
             raise exceptions.BadRequest(u"current member no files")
         else:
             for f in files.files:
                 if f.filename in filenames:
+                    info = {}
                     if not f.is_delete:
                         info['data'] = unicode(cls.get_enctype_data(f.data.read()), "ISO-8859-1")
                         info['content_type'] = f.data.content_type
@@ -153,7 +153,9 @@ class FileDAO:
                     f.is_delete = 1
                     remove_capacity += f.data.length
             if index != None:
+                index.reverse() #pop from big to small
                 for i in index:
+                    print i
                     files.files.pop(i)
                 files.capacity = capacity_on_fly(cur_capacity, remove_capacity, 'delete')
                 files.save()

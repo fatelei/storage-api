@@ -19,3 +19,5 @@ SERVER = {
     'template_path': '%s/%s' % (BASE_DIR, 'templates'),
     'static_path': '%s/%s' % (BASE_DIR, 'static')
 }
+
+TMPDIR = "/".join([BASE_DIR, "tmp"])

@@ -8,6 +8,7 @@ import os
 from tornado import web
 from demo.views.base import BaseHandler
 from demo.utils.tools import render, check_status
+from demo.settings import TMPDIR
 
 class DemoIndexHandler(BaseHandler):
     @render("index.html")
@@ -15,6 +16,9 @@ class DemoIndexHandler(BaseHandler):
     def get(self):
         token = self.get_secure_cookie("access_token")
         response = self.client.api_get("member/info", token)
+        _, content = response
+        content = json.loads(content)
+        self.set_secure_cookie("name", content['name'])
         return response
 
 
@@ -41,7 +45,27 @@ class DemoFilesDownloadHandler(BaseHandler):
                 self.set_header('Content-Disposition', 'attachment; filename='+content[0]['filename'])
                 self.write(content[0]['data'])
             else:
-                pass
+                need_rm = []
+                username = self.get_secure_cookie("name")
+                os.chdir(TMPDIR)
+                os.system("mkdir {0}".format(username))
+                os.chdir(username)
+                for data in content:
+                    f = file(data['filename'], "w")
+                    f.write(data['data'])
+                    f.close()
+                os.chdir(TMPDIR)
+                download_name = "{0}-download.tar.gz".format(username)
+                command = "tar -czf {0} {1}".format(download_name, username)
+                os.system(command)
+                self.set_header("Content-Type", "application/octet-stream")
+                self.set_header("Content-Disposition", 'attachment; filename='+download_name)
+                f = file(download_name, "rb")
+                data = f.read()
+                f.close()
+                command = "rm -rf {0} {1}".format(username, download_name)
+                os.system(command)
+                self.write(data)
         else:
             self.write(content['error']['message'])
 

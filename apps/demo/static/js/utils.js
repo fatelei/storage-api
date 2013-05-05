@@ -1,3 +1,5 @@
+var handle_check_filename = [];
+
 PageClick = function (click_num) {
     go_to_click_page(click_num);
 }
@@ -33,7 +35,7 @@ function render_files (data) {
     var html = '';
     for (var i = 0; i < data.length; i++) {
         html += '<div class="accordion-group"><div class="accordion-heading">';
-        html += '<input type="checkbox" name="check_file" value="' + data[i].filename + '"/>';
+        html += '<input type="checkbox" onchange="handle_change(this);" name="check_file" value="' + data[i].filename + '"/>';
         html += '<a href="' + download_url + data[i].filename + '">';
         html += '<i class="icon-file"></i>' + data[i].filename + '</a>';
         html += '<a class="accordion-toggle pull-right" \
@@ -110,4 +112,36 @@ function remove_file(filenames) {
         return false;
     });
     return false;
+}
+
+function remove_batch() {
+    var checklists = document.getElementsByName("check_file");
+    var filenames = '';
+    var length = checklists.length;
+    for (var i = 0; i < length - 1; i++) {
+        if (checklists[i].checked) {
+            filenames += checklists[i].value + ',';
+        }
+    }
+    if (checklists[length - 1].checked) {
+        filenames += checklists[length - 1].value;
+    }
+    if (filenames.length == 0) {
+        alert("no file(s) choosed to be deleted!");
+        return false;
+    } else {
+        return remove_file(filenames);
+    }
+}
+
+function handle_change(obj) {
+    if (obj.checked) {
+        handle_check_filename.push(obj.value);
+    } else {
+        index = handle_check_filename.indexOf(obj.value);
+        handle_check_filename.pop(index);    
+    }
+    var href = handle_check_filename.join(",");
+    href = download_url + href;
+    $('#download').attr("href", href);
 }
