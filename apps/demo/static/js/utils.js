@@ -33,7 +33,8 @@ function render_files (data) {
     var html = '';
     for (var i = 0; i < data.length; i++) {
         html += '<div class="accordion-group"><div class="accordion-heading">';
-        html += '<a href="#">';
+        html += '<input type="checkbox" name="check_file" value="' + data[i].filename + '"/>';
+        html += '<a href="' + download_url + data[i].filename + '">';
         html += '<i class="icon-file"></i>' + data[i].filename + '</a>';
         html += '<a class="accordion-toggle pull-right" \
                  data-toggle="collapse" data-parent="#media-accordion" href="#media' + i + '">更多操作</a>';
@@ -43,7 +44,7 @@ function render_files (data) {
         html += '<li><i class="icon-download"></i><a href="#">Download</a></li>';
         html += '<li><i class="icon-pencil"></i><a href="#" onclick=\'return rename("' + data[i].filename + '");\'>Rename</a></li>';
         html += '<li class="media-divider"></li>';
-        html += '<li><i class="icon-trash"></i><a href="#">Remove</a></li></ul>';
+        html += '<li><i class="icon-trash"></i><a href="#" onclick=\'return remove_file("' + data[i].filename + '");\'>Remove</a></li></ul>';
         html += '</div></div></div>';
     }
     return html;
@@ -83,4 +84,30 @@ function upload_files() {
 function clear_attr(obj) {
     $(obj).parent().parent().removeClass('error');
     $($(obj).parent().children()[1]).remove();
+}
+
+function remove_file(filenames) {
+    if (!confirm("Are you sure to remove the file(s)?")) {
+        return false;
+    }
+    var csrf = document.getElementsByName("_xsrf");
+    $.ajax({
+        url: remove_url,
+        type: 'POST',
+        dataType: 'json',
+        data: {"_xsrf": csrf[0].value, "filenames": filenames},
+        error: function (jpXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+            return false;
+        }
+    }).done(function (data) {
+        if ('errmsg' in data) {
+            alert(data.errmsg);
+        } else {
+            alert(data.msg);
+            render_user_files();
+        }
+        return false;
+    });
+    return false;
 }

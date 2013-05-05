@@ -177,7 +177,9 @@ class FileDAO:
         else:
             for f in files.files:
                 if f.filename == filename:
-                    f.filename = new_filename
+                    tmp = f.filename.split(".")
+                    tmp[0] = new_filename
+                    f.filename = ".".join(tmp)
                     files.save()
                     info['code'] = STORAGE_CODE.FILE_UPDATE_OK
                     info['msg'] = u'rename file successfully'

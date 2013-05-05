@@ -11,3 +11,4 @@ build
 *.txt
 *.rdb
 .DS_Store
+apps/demo/settings.py

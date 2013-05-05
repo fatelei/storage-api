@@ -98,6 +98,7 @@
     <div id="op-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="loadLabel" aria-hidden="true">
     </div>
 </div>
+{% module xsrf_form_html() %}
 {% end %}
 {% block js %}
 <script type="text/javascript" src="{{static_url('js/utils.js')}}"></script>
@@ -111,6 +112,8 @@
     var csrf_token = '{% module xsrf_form_html() %}';
     var check_filename_exist_url = '{{reverse_url("exists")}}';
     var rename_url = '{{reverse_url("rename")}}';
+    var remove_url = '{{reverse_url("remove")}}';
+    var download_url = '{{reverse_url("download", "0")}}'.slice(0, -1);
     $(document).ready(function () {
         $('.dropdown-toggle').dropdown();
         $('#upload').bind('click', function () {

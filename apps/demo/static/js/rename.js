@@ -77,6 +77,7 @@ function start_rename(old_filename) {
         } else {
             $('#op-modal').modal('hide');
             alert(data.msg);
+            render_user_files();
         }
         return false;
     });

@@ -11,11 +11,12 @@ def render(tpl):
     def decorate(func):
         def Wraps(self, *args, **kwargs):
             response = func(self, *args, **kwargs)
-            if 'msg' in response:
+            if 'errmsg' in response:
                 self.write(json.dumps(response))
             else:
                 status, content = response
                 content = json.loads(content)
+                print content
                 err = {'errmsg': ''}
                 if int(status['status']) not in CORRECT_HTTP_CODE:
                     if not tpl:
@@ -25,34 +26,11 @@ def render(tpl):
                         return self.render(tpl, err = err)
                 else:
                     if not tpl:
-                        self.write(content)
+                        self.write(json.dumps(content))
                     else:
                         return self.render(tpl, user = content)
         return Wraps
     return decorate
-
-
-def authenticated(method):
-    """
-    hack the tornado authenticated decorator
-    """
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        if not self.current_user:
-            if self.request.method in ("GET", "HEAD"):
-                url = self.get_login_url()
-                if "?" not in url:
-                    if urlparse.urlsplit(url).scheme:
-                        # if login url is absolute, make next absolute too
-                        next_url = self.request.full_url()
-                    else:
-                        next_url = self.request.uri
-                    url += "?" + urlencode(dict(next=next_url))
-                self.redirect(url)
-                return
-            raise HTTPError(403)
-        return method(self, *args, **kwargs)
-    return wrapper
 
 
 def check_status(status):
