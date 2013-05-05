@@ -118,3 +118,11 @@ class DemoFileExistHandler(BaseHandler):
             return response
         else:
             return {'errmsg': u'need input filename'}
+
+class DemoGetUserSpaceHandler(BaseHandler):
+    @render(None)
+    @web.authenticated
+    def get(self):
+        token = self.get_secure_cookie("access_token")
+        response = self.client.api_get("member/space", token)
+        return response

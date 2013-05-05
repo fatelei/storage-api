@@ -73,6 +73,7 @@ class DemoRegisterHandler(BaseHandler):
             self.render("register.html", err = err)
         data = {'name': name, 'email': email, 'password': password}
         resp, content = self.client.oauth_register(**data)
+        content = json.loads(content)
         if check_status(int(resp['status'])):
             self.redirect(self.reverse_url("login"))
         else:

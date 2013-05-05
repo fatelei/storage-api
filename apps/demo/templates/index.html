@@ -38,6 +38,7 @@
                 <span class="span-tool"></span><a href="#" class="btn" id="upload"><i class="icon-upload"></i>Upload</a>
                 <span class="span-tool"></span><a href="#" class="btn" id="download"><i class="icon-download"></i>Download</a>
                 <span class="span-tool"></span><a href="#" class="btn" onclick="return remove_batch();" id="remove"><i class="icon-trash"></i>Remove</a>
+                <span class="span-tool"></span><span class="label label-info" id="space"></span>
             </div>
             <div class="media-content-box" id="media-accordion">
             </div>
@@ -114,6 +115,7 @@
     var rename_url = '{{reverse_url("rename")}}';
     var remove_url = '{{reverse_url("remove")}}';
     var download_url = '{{reverse_url("download", "0")}}'.slice(0, -1);
+    var space_url = '{{reverse_url("space")}}';
     $(document).ready(function () {
         $('.dropdown-toggle').dropdown();
         $('#upload').bind('click', function () {

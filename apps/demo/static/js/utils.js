@@ -26,6 +26,7 @@ function render_user_files () {
                                  pagecount: page.totalpage,
                                  buttonClickCallback: PageClick});
         $('#media-accordion').html(render_files(data.data));
+        display_usage();
         return false;
     });
     return false;
@@ -144,4 +145,24 @@ function handle_change(obj) {
     var href = handle_check_filename.join(",");
     href = download_url + href;
     $('#download').attr("href", href);
+}
+
+function display_usage() {
+    $.ajax({
+        url: space_url,
+        type: 'GET',
+        dataType: 'json',
+        error: function (jpXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+            return false;
+        }
+    }).done(function (data) {
+        if ('errmsg' in data) {
+            alert(data.errmsg);
+        } else {
+            $('#space')[0].innerText = 'usage:' + data.usage + '/' + data.capacity;
+        }
+        return false;
+    });
+    return false;
 }

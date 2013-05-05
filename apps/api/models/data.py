@@ -31,6 +31,7 @@ class File(EmbeddedDocument):
 class Files(Document):
     member_id = StringField(max_length = 40, required = True, unique = True)
     capacity = IntField(default = 5242880)
+    usage = IntField(default = 0)
     files = ListField(EmbeddedDocumentField(File), default = list)
 
     @classmethod

@@ -23,11 +23,13 @@ class FileDAO:
         return rst
 
     @classmethod
+    @mc.cache()
     def get_user_space(cls, member_id):
         info = {}
-        f = Files.objects(member_id = member_id).only('capacity').first()
+        f = Files.objects(member_id = member_id).only('capacity', 'usage').first()
         if f:
             info['capacity'] = f.capacity
+            info['usage'] = f.usage
             return info
         else:
             raise exceptions.BadRequest(u"no such user")
@@ -94,8 +96,9 @@ class FileDAO:
             length = lambda x: len(x['body'])
             add = lambda x, y: x + y
             need_space = reduce(add, map(length, data))
-            cur_capacity = files.capacity
-            if need_space > cur_capacity:
+            cur_usage = files.usage
+            cur_left_space = files.capacity - cur_usage
+            if need_space > cur_left_space:
                 raise exceptions.BadRequest(u"the space is not enough!")
             for d in data:
                 has_file = Files.objects(Q(member_id = member_id) & Q(files__filename__exact = d['filename'])).first()
@@ -107,9 +110,9 @@ class FileDAO:
                             f.data.write(cls.get_enctype_data(d['body']))
                             f.data.close()
                             if old_length > f.data.length:
-                                files.capacity = capacity_on_fly(cur_capacity, (old_length - f.data.length), 'incr')
+                                files.usage = capacity_on_fly(cur_usage, (old_length - f.data.length), 'incr')
                             else:
-                                files.capacity = capacity_on_fly(cur_capacity, (f.data.length - old_length), 'updata')
+                                files.usage = capacity_on_fly(cur_usage, (f.data.length - old_length), 'updata')
                             files.save()
                             break
                 else:
@@ -121,7 +124,7 @@ class FileDAO:
                     new_file.data.write(cls.get_enctype_data(d['body']))
                     new_file.data.close()
                     files.update(add_to_set__files = new_file)
-                    files.capacity = capacity_on_fly(cur_capacity, new_file.data.length, 'save')
+                    files.usage = capacity_on_fly(cur_usage, new_file.data.length, 'save')
                     files.save()
                 info['code'] = STORAGE_CODE.FILE_CREATE_OK
                 info['msg'] = u'file(s) uploaded successfully'
@@ -129,6 +132,7 @@ class FileDAO:
             info['code'] = STORAGE_CODE.MEMBER_NO_FILES
             info['msg'] = u"member has no files"
         mc.invalidate(cls.get_files, member_id)
+        mc.invalidate(cls.get_user_space, member_id)
         return info
 
 
@@ -145,7 +149,7 @@ class FileDAO:
             info['code'] = STORAGE_CODE.FILES_IS_EMPTY
             info['msg'] = u'member has no files'
         else:
-            cur_capacity = files.capacity
+            cur_capacity = files.usage
             filenames = filenames.split(",")
             for f in files.files:
                 if f.filename in filenames:
@@ -157,7 +161,7 @@ class FileDAO:
                 for i in index:
                     print i
                     files.files.pop(i)
-                files.capacity = capacity_on_fly(cur_capacity, remove_capacity, 'delete')
+                files.usage = capacity_on_fly(cur_capacity, remove_capacity, 'delete')
                 files.save()
                 info['code'] = STORAGE_CODE.FILE_DELETE_OK
                 info['msg'] = u'file has already been deleted' 
@@ -165,6 +169,7 @@ class FileDAO:
                 info['code'] = STORAGE_CODE.FILE_NOT_DELETE
                 info['msg'] = u'file delete failed'
         mc.invalidate(cls.get_files, member_id)
+        mc.invalidate(cls.get_user_space, member_id)
         return info
 
     @classmethod
