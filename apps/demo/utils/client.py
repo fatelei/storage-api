@@ -5,6 +5,7 @@ import httplib2
 import urllib
 
 from demo import settings
+from demo.utils.tools import urlencode
 
 class APIClient(object):
     def __init__(self):
@@ -24,7 +25,7 @@ class APIClient(object):
 
     def oauth_register(self, **params):
         self.headers['Authorization'] = "oauth:%s" % self.client_key
-        post_data = urllib.urlencode(params)
+        post_data = urlencode(params)
         req_url = "%s/member/register" % self.api_url
         response = self.http.request(req_url, method = "POST", body = post_data, headers = self.headers)
         return response
@@ -35,7 +36,7 @@ class APIClient(object):
         return response
 
     def execute_request(self, path, access_token, method = 'GET', **params):
-        params = urllib.urlencode(params)
+        params = urlencode(params)
         if method in ['GET', 'DELETE']:
             req_url = "?".join([path, params])
             body = None

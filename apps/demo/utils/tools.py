@@ -16,7 +16,6 @@ def render(tpl):
             else:
                 status, content = response
                 content = json.loads(content)
-                print content
                 err = {'errmsg': ''}
                 if int(status['status']) not in CORRECT_HTTP_CODE:
                     if not tpl:
@@ -38,3 +37,26 @@ def check_status(status):
         return False
     else:
         return True
+
+def utf8_param(v):
+    """
+    将参数中的 unicode 及 int 转为 utf8 的 str
+    """
+    return v.encode('utf-8') if isinstance(v, unicode) else str(v)
+
+
+def urlencode(params):
+    """
+    自定义 urlencode，仅做字符串拼接
+    """
+    if hasattr(params, "items"):
+        # mapping objects
+        params = params.items()
+    else:
+        # tuple list
+        pass
+    l = []
+    for k, v in params:
+        l.append(k + '=' + utf8_param(v))
+    param = '&'.join(l)
+    return param.decode('utf-8')

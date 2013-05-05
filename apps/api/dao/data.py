@@ -78,7 +78,7 @@ class FileDAO:
             for f in files.files:
                 if f.filename in filenames:
                     if not f.is_delete:
-                        info['data'] = cls.get_enctype_data(f.data.read())
+                        info['data'] = unicode(cls.get_enctype_data(f.data.read()), "ISO-8859-1")
                         info['content_type'] = f.data.content_type
                         info['filename'] = f.filename
                         data.append(info)
@@ -94,7 +94,6 @@ class FileDAO:
             length = lambda x: len(x['body'])
             add = lambda x, y: x + y
             need_space = reduce(add, map(length, data))
-            print need_space
             cur_capacity = files.capacity
             if need_space > cur_capacity:
                 raise exceptions.BadRequest(u"the space is not enough!")
@@ -119,7 +118,6 @@ class FileDAO:
                     new_file.filename = d['filename']
                     new_file.set_time()
                     new_file.data.new_file(content_type = d['content_type'])
-                    print d['content_type']
                     new_file.data.write(cls.get_enctype_data(d['body']))
                     new_file.data.close()
                     files.update(add_to_set__files = new_file)
