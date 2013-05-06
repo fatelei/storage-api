@@ -38,6 +38,7 @@ class OAuthApiLoginHandler(web.RequestHandler):
             info = exceptions.ServerError().info
             self.set_status(HTTP_CODE.INTERNAL_SERVER_ERROR)
         self.set_header("Content-Type", "application/json")
+        logging.warning(info)
         self.write(json.dumps(info))
 
 class OAuthApiLogoutHandler(web.RequestHandler):

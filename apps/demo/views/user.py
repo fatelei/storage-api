@@ -28,9 +28,12 @@ class DemoLoginHandler(BaseHandler):
             err['msg'] = u'no password'
             self.render("login.html", err = err)
         data = {"email": email, "password": password}
-        resp, content = self.client.oauth_login(**data)
+        status, content = self.client.oauth_login(**data)
         content = json.loads(content)
-        if check_status(int(resp['status'])):
+        if "error" in content:
+            err['msg'] = content['error']['message']
+            self.render("login.html", err = err)
+        if check_status(int(status['status'])):
             self.set_secure_cookie("access_token", content['access_token'])
             self.redirect(self.reverse_url("index"))
         else:

@@ -1,0 +1,151 @@
+worker_processes  1;
+events {
+    worker_connections  1024;
+}
+
+http {
+    types {
+        text/html                             html htm shtml;
+        text/css                              css;
+        text/xml                              xml;
+        image/gif                             gif;
+        image/jpeg                            jpeg jpg;
+        application/x-javascript              js;
+        application/atom+xml                  atom;
+        application/rss+xml                   rss;
+
+        text/mathml                           mml;
+        text/plain                            txt;
+        text/vnd.sun.j2me.app-descriptor      jad;
+        text/vnd.wap.wml                      wml;
+        text/x-component                      htc;
+
+        image/png                             png;
+        image/tiff                            tif tiff;
+        image/vnd.wap.wbmp                    wbmp;
+        image/x-icon                          ico;
+        image/x-jng                           jng;
+        image/x-ms-bmp                        bmp;
+        image/svg+xml                         svg;
+
+        application/java-archive              jar war ear;
+        application/mac-binhex40              hqx;
+        application/msword                    doc;
+        application/pdf                       pdf;
+        application/postscript                ps eps ai;
+        application/rtf                       rtf;
+        application/vnd.ms-excel              xls;
+        application/vnd.ms-powerpoint         ppt;
+        application/vnd.wap.wmlc              wmlc;
+        application/vnd.google-earth.kml+xml  kml;
+        application/vnd.google-earth.kmz      kmz;
+        application/x-7z-compressed           7z;
+        application/x-cocoa                   cco;
+        application/x-java-archive-diff       jardiff;
+        application/x-java-jnlp-file          jnlp;
+        application/x-makeself                run;
+        application/x-perl                    pl pm;
+        application/x-pilot                   prc pdb;
+        application/x-rar-compressed          rar;
+        application/x-redhat-package-manager  rpm;
+        application/x-sea                     sea;
+        application/x-shockwave-flash         swf;
+        application/x-stuffit                 sit;
+        application/x-tcl                     tcl tk;
+        application/x-x509-ca-cert            der pem crt;
+        application/x-xpinstall               xpi;
+        application/xhtml+xml                 xhtml;
+        application/zip                       zip;
+
+        application/octet-stream              bin exe dll;
+        application/octet-stream              deb;
+        application/octet-stream              dmg;
+        application/octet-stream              eot;
+        application/octet-stream              iso img;
+        application/octet-stream              msi msp msm;
+
+        audio/midi                            mid midi kar;
+        audio/mpeg                            mp3;
+        audio/ogg                             ogg;
+        audio/x-realaudio                     ra;
+
+        video/3gpp                            3gpp 3gp;
+        video/mpeg                            mpeg mpg;
+        video/quicktime                       mov;
+        video/x-flv                           flv;
+        video/x-mng                           mng;
+        video/x-ms-asf                        asx asf;
+        video/x-ms-wmv                        wmv;
+        video/x-msvideo                       avi;
+    }
+    default_type  application/octet-stream;
+
+    upstream oauth2server {
+        server 127.0.0.1:8888;
+    }
+
+    upstream storage_api {
+        server 127.0.0.1:5000;
+    }
+
+    upstream demo {
+       server 127.0.0.1:9999;
+    }
+
+    sendfile        on;
+
+    keepalive_timeout  65;
+
+    server {
+        listen 443;
+        ssl on;
+        ssl_certificate ${buildout:directory}/etc/storage-cert.pem;
+        ssl_certificate_key ${buildout:directory}/etc/storage-key.pem;
+
+        ssl_session_timeout  5m;
+
+        ssl_protocols  SSLv2 SSLv3 TLSv1;
+        ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+        ssl_prefer_server_ciphers   on;
+
+        server_name oauth.storage.com;
+        location / {
+            proxy_pass http://oauth2server;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_connect_timeout   10s;
+            proxy_send_timeout      1m;
+            proxy_read_timeout      1m;
+            proxy_redirect http:// https://;
+        }
+    }
+
+    server {
+        listen 443;
+        ssl on;
+        ssl_certificate ${buildout:directory}/etc/storage-cert.pem;
+        ssl_certificate_key ${buildout:directory}/etc/storage-key.pem;
+        ssl_session_timeout  5m;
+
+        ssl_protocols  SSLv2 SSLv3 TLSv1;
+        ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+        ssl_prefer_server_ciphers   on;
+
+        server_name api.storage.com;
+        location / {
+            proxy_pass http://storage_api;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_connect_timeout   10s;
+            proxy_send_timeout      1m;
+            proxy_read_timeout      1m;
+            proxy_redirect http:// https://;
+        }
+    }
+
+    server {
+        listen 80;
+        server_name www.demo.com;
+        location / {
+            proxy_pass http://demo;
+        }
+    }
+}

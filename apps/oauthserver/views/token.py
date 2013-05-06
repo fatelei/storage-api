@@ -74,7 +74,7 @@ class AdminTokensAjaxHandler(BaseHandler):
         if not self.is_admin:
             raise web.HTTPError(404)
         offset = int(self.get_argument('offset', 1))
-        total = len(TokenApply.objects)
+        total = len(TokenApply.objects)/20 if len(TokenApply.objects)%20 == 0 else len(TokenApply.objects)/20 + 1
         apply_tokens = TokenApply.objects(is_done = 0)\
                        .only("member_id", "name",
                              "description", "apply_status")[(offset - 1) * 10: offset+10]

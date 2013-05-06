@@ -9,6 +9,8 @@ from app import Application
 from urls import handlers
 from api.config.settings import SERVER
 
+application = Application(handlers, **SERVER)
+
 def run():
     options.parse_command_line()
     app = Application(handlers, **SERVER)

@@ -7,7 +7,8 @@ install_requires = ['mongoengine',
                     'tornado',
                     'blinker',
                     'redis',
-                    'redis_shard']
+                    'redis_shard',
+                    'requests']
 
 entry_points = """
 	[console_scripts]

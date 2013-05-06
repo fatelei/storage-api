@@ -10,24 +10,20 @@ from demo.settings import CORRECT_HTTP_CODE
 def render(tpl):
     def decorate(func):
         def Wraps(self, *args, **kwargs):
-            response = func(self, *args, **kwargs)
-            if 'errmsg' in response:
-                self.write(json.dumps(response))
-            else:
-                status, content = response
-                content = json.loads(content)
-                err = {'errmsg': ''}
-                if int(status['status']) not in CORRECT_HTTP_CODE:
-                    if not tpl:
-                        err['errmsg'] = content['error']['message']
-                        self.write(json.dumps(err))
-                    else:
-                        return self.render(tpl, err = err)
+            status, content = func(self, *args, **kwargs)
+            content = json.loads(content)
+            err = {'errmsg': ''}
+            if int(status['status']) not in CORRECT_HTTP_CODE:
+                if not tpl:
+                    err['errmsg'] = content['error']['message']
+                    self.write(json.dumps(err))
                 else:
-                    if not tpl:
-                        self.write(json.dumps(content))
-                    else:
-                        return self.render(tpl, user = content)
+                    return self.render(tpl, err = err)
+            else:
+                if not tpl:
+                    self.write(json.dumps(content))
+                else:
+                    return self.render(tpl, user = content)
         return Wraps
     return decorate
 

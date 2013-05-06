@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 #-*-coding: utf8-*-
 
-import httplib2
+import requests
 import urllib
+import logging
 
 from demo import settings
 from demo.utils.tools import urlencode
@@ -13,31 +14,34 @@ class APIClient(object):
         self.client_secret = settings.CLIENT_SECRET
         self.api_url = settings.API_DOMAIN
         self.headers = {"Content-Type": "application/x-www-form-urlencoded"}
-        self.http = httplib2.Http()
+
+    def generate_response(self, response):
+        status = {'status': ''}
+        status['status'] = response.status_code
+        content = response.text
+        return status, content
 
     def oauth_login(self, **params):
         params.update({"grant_type": "password", "client_key": self.client_key,
                        "client_secret": self.client_secret})
-        post_data = urllib.urlencode(params)
         req_url = "%s/member/login" % self.api_url
-        response = self.http.request(req_url, method = "POST", body = post_data, headers = self.headers)
-        return response
+        response = requests.post(req_url, data = params, headers = self.headers, verify = False)
+        return self.generate_response(response)
 
     def oauth_register(self, **params):
         self.headers['Authorization'] = "oauth:%s" % self.client_key
-        post_data = urlencode(params)
         req_url = "%s/member/register" % self.api_url
-        response = self.http.request(req_url, method = "POST", body = post_data, headers = self.headers)
-        return response
+        response = requests.post(req_url, data = params, headers = self.headers, verify = False)
+        return self.generate_response(response)
 
     def oauth_logout(self, **params):
         req_url = "%s/member/logout/%s" % (self.api_url, params['access_token'])
-        response = self.http.request(req_url, method = 'POST', body = None, headers = self.headers)
-        return response
+        response = requests.post(req_url, headers = self.headers, verify = False)
+        return self.generate_response(response)
 
     def execute_request(self, path, access_token, method = 'GET', **params):
-        params = urlencode(params)
         if method in ['GET', 'DELETE']:
+            params = urlencode(params)
             req_url = "?".join([path, params])
             body = None
         else:
@@ -45,15 +49,16 @@ class APIClient(object):
             body = params
         self.headers['Authorization'] = "bearer:%s" % access_token
         path = "%s/%s" % (self.api_url, req_url)
-        response = self.http.request(path, method, body = body, headers = self.headers)
-        return response
+        func = getattr(requests, method.lower())
+        response = func(path, data = body, headers = self.headers, verify = False)
+        return self.generate_response(response)
 
     def upload_file(self, uri, access_token, header, body):
         self.headers['Content-Type'] = header
         self.headers['Authorization'] = "bearer:%s" % access_token
         path = "%s/%s" % (self.api_url, uri)
-        response = self.http.request(path, 'POST', body = body, headers = self.headers)
-        return response
+        response = requests.post(path, data = body, headers = self.headers, verify = False)
+        return self.generate_response(response)
 
     def api_get(self, uri, access_token, **params):
         return self.execute_request(uri, access_token, 'GET', **params)

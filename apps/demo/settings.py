@@ -3,7 +3,7 @@
 
 import os
 
-API_DOMAIN = "http://localhost:9000"
+API_DOMAIN = "https://api.storage.com"
 CLIENT_SECRET = '99a8c92e407d4e498fba8f91b858dcbf'
 CLIENT_KEY = 'd5459faf33ae46f6bc5b3761d27354db'
 
