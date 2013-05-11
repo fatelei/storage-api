@@ -1,0 +1,7 @@
+configsvr = true
+dbpath = /data/db/storage-config02
+logpath = ${buildout:directory}/log/configsvr02.log
+bind_ip = localhost
+port = 20011
+nohttpinterface = true
+fork = true

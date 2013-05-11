@@ -1,0 +1,8 @@
+bind_ip = localhost
+port = 29702
+logpath = ${buildout:directory}/log/storage-replset02.log
+dbpath = /data/db/storage02
+oplogSize = 700
+fork = true
+nohttpinterface = true
+replSet = storage-replset
