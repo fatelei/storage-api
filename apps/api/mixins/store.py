@@ -47,4 +47,7 @@ class FileMixin(object):
 
     def api_file_usage(self):
         info = FileDAO.get_user_space(self.login_id)
-        return info
+        if isinstance(info, str):
+            return json.loads(info)
+        else:
+            return info

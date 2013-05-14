@@ -44,7 +44,7 @@ function render_files (data) {
         html += '<span class="media-date"><strong>' + data[i].time + '</strong></span>';
         html += '<span class="media-size"><strong>' + data[i].type + '</strong></span></div>';
         html += '<div class="accordion-inner"><ul class="media-op">';
-        html += '<li><i class="icon-download"></i><a href="#">Download</a></li>';
+        html += '<li><i class="icon-download"></i><a href="' + download_url + data[i].filename + '">Download</a></li>';
         html += '<li><i class="icon-pencil"></i><a href="#" onclick=\'return rename("' + data[i].filename + '");\'>Rename</a></li>';
         html += '<li class="media-divider"></li>';
         html += '<li><i class="icon-trash"></i><a href="#" onclick=\'return remove_file("' + data[i].filename + '");\'>Remove</a></li></ul>';
@@ -157,6 +157,7 @@ function display_usage() {
             return false;
         }
     }).done(function (data) {
+        console.log(typeof(data));
         if ('errmsg' in data) {
             alert(data.errmsg);
         } else {

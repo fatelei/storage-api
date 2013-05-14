@@ -2,5 +2,5 @@ configdb = localhost:20010,localhost:20011,localhost:20012
 port = 27710
 logpath = ${buildout:directory}/log/storage-route.log
 nohttpinterface = true
-
+fork = true
 

@@ -4,8 +4,8 @@
 import os
 
 API_DOMAIN = "https://api.storage.com"
-CLIENT_SECRET = '99a8c92e407d4e498fba8f91b858dcbf'
-CLIENT_KEY = 'd5459faf33ae46f6bc5b3761d27354db'
+CLIENT_SECRET = '4da0e61b6bf24d608bb976ebbf0e2bad'
+CLIENT_KEY = '26a3a73f6d344dde941bb8aec54b77c6'
 
 CORRECT_HTTP_CODE = [200, 201, 202, 203, 204, 205, 206, 300, 301, 302, 303, 304, 305, 306, 307]
 
