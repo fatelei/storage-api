@@ -34,7 +34,7 @@ class FileDAO:
             info['usage'] = f.usage
             return info
         else:
-            raise exceptions.BadRequest(u"no such user")
+            raise exceptions.BadRequest(u"不存在此用户")
 
     @classmethod
     def check_file_exists(cls, member_id, filename):
@@ -76,7 +76,7 @@ class FileDAO:
                               Q(files__filename__in = filenames)).only("files").first()
         data = []
         if not files:
-            raise exceptions.BadRequest(u"current member no files")
+            raise exceptions.BadRequest(u"用户未存储文件")
         else:
             for f in files.files:
                 if f.filename in filenames:
@@ -87,7 +87,7 @@ class FileDAO:
                         info['filename'] = f.filename
                         data.append(info)
                     else:
-                        raise exceptions.BadRequest(u"file has been deleted")
+                        raise exceptions.BadRequest(u"文件已经被删除")
             return data
 
     @classmethod
@@ -101,7 +101,7 @@ class FileDAO:
             cur_usage = files.usage
             cur_left_space = files.capacity - cur_usage
             if need_space > cur_left_space:
-                raise exceptions.BadRequest(u"the space is not enough!")
+                raise exceptions.BadRequest(u"存储空间不足!")
             for d in data:
                 has_file = Files.objects(Q(member_id = member_id) & Q(files__filename__exact = d['filename'])).first()
                 if has_file:
@@ -129,10 +129,10 @@ class FileDAO:
                     files.usage = capacity_on_fly(cur_usage, new_file.data.length, 'save')
                     files.save()
                 info['code'] = STORAGE_CODE.FILE_CREATE_OK
-                info['msg'] = u'file(s) uploaded successfully'
+                info['msg'] = u'文件上传成功'
         else:
             info['code'] = STORAGE_CODE.MEMBER_NO_FILES
-            info['msg'] = u"member has no files"
+            info['msg'] = u"用户未存储文件"
         mc.invalidate(cls.get_files, member_id)
         mc.invalidate(cls.get_user_space, member_id)
         return info
@@ -146,10 +146,10 @@ class FileDAO:
         remove_capacity = 0
         if not files:
             info['code'] = STORAGE_CODE.MEMBER_NO_FILES
-            info['msg'] = u'no current member'
+            info['msg'] = u'不存在此用户'
         elif len(files.files) == 0:
             info['code'] = STORAGE_CODE.FILES_IS_EMPTY
-            info['msg'] = u'member has no files'
+            info['msg'] = u'用户未存储文件'
         else:
             cur_capacity = files.usage
             filenames = filenames.split(",")
@@ -166,10 +166,10 @@ class FileDAO:
                 files.usage = capacity_on_fly(cur_capacity, remove_capacity, 'delete')
                 files.save()
                 info['code'] = STORAGE_CODE.FILE_DELETE_OK
-                info['msg'] = u'file has already been deleted' 
+                info['msg'] = u'文件已经被删除' 
             else:
                 info['code'] = STORAGE_CODE.FILE_NOT_DELETE
-                info['msg'] = u'file delete failed'
+                info['msg'] = u'文件删除失败'
         mc.invalidate(cls.get_files, member_id)
         mc.invalidate(cls.get_user_space, member_id)
         return info
@@ -180,7 +180,7 @@ class FileDAO:
         info = {}
         if not files:
             info['code'] = STORAGE_CODE.MEMBER_NO_FILES
-            info['msg'] = u'member has no files'
+            info['msg'] = u'用户未存储文件'
         else:
             for f in files.files:
                 if f.filename == filename:
@@ -189,11 +189,11 @@ class FileDAO:
                     f.filename = ".".join(tmp)
                     files.save()
                     info['code'] = STORAGE_CODE.FILE_UPDATE_OK
-                    info['msg'] = u'rename file successfully'
+                    info['msg'] = u'重命名成功'
                     mc.invalidate(cls.get_files, member_id)
                     return info
             info['code'] = STORAGE_CODE.FILE_NOT_EXISTS
-            info['msg'] = u'file is not exists'
+            info['msg'] = u'文件不存在'
         mc.invalidate(cls.get_files, member_id)
         return info
 
@@ -218,10 +218,10 @@ class FileDAO:
         if not share:
             new_share = FileShare(member_id = member_id,
                                   share_filename = filename,
-                                  share_to_username = [share_to_username])
+                                  share_to_members = [share_to_username])
             new_share.save()
         else:
-            share.update(add_to_set__share_to_member = share_to_username)
+            share.update(add_to_set__share_to_members = share_to_username)
             share.save()
         info['msg'] = u"分享成功"
         return info
@@ -230,7 +230,7 @@ class FileDAO:
     def remove_file_share(cls, filename):
         share = FileShare.objects(share_filename = filename).first()
         if share:
-            share.update(is_delete = 1)
+            share.update(set__is_delete = 1)
             share.save()
 
     @classmethod
@@ -239,15 +239,15 @@ class FileDAO:
         info = {}
         data = []
         if member:
-            shared_files = FileShare.objects(Q(share_to_username__in = member.name) &
+            shared_files = FileShare.objects(Q(share_to_members__in = [member.name]) &
                                              Q(is_delete = 0))\
                                     .only("share_filename")\
-                                    .first()
+                                    .all()
             if shared_files:
                 for f in shared_files:
                     data.append({"filename": f.share_filename})
         info['data'] = data
-        info['totalpage'] = len(data)/MACRO.DEFAULT_MAX_COUNT if len(data)%MACRO.DEFAULT_MAX_COUNT == 0 else len(data)/MACRO.DEFAULT_MAX_COUNT + 1
+        info['totalpage'] = len(data)/MACRO.DEFAULT_MAX_COUNT if len(data)%MACRO.DEFAULT_MAX_COUNT == 0 and len(data) != 0 else len(data)/MACRO.DEFAULT_MAX_COUNT + 1
         return info
 
     @classmethod
@@ -256,7 +256,7 @@ class FileDAO:
         member = Member.objects(member_id = member_id).only("name").first()
         if member:
             share_member = FileShare.objects(Q(share_filename = filename) &
-                                             Q(share_to_username__in = member.name))\
+                                             Q(share_to_members__in = [member.name]))\
                                     .only("member_id")\
                                     .first()
             if share_member:

@@ -162,9 +162,44 @@ function display_usage() {
         if ('errmsg' in data) {
             alert(data.errmsg);
         } else {
-            $('#space')[0].innerText = '容量:' + data.usage + '/' + data.capacity/1024/1024 + 'MB';
+            $('#space')[0].innerText = '容量:' + Math.round(data.usage/1024/1024) + 'MB/' + data.capacity/1024/1024 + 'MB';
         }
         return false;
     });
     return false;
+}
+
+function render_user_share_files () {
+    var visit_url = share_filelist_url + '?offset=' + page.page + '&x=' + Math.random();
+    $.ajax({
+        url: visit_url,
+        type: 'GET',
+        dataType: 'json',
+        error: function (jpXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+            return false;
+        }
+    }).done(function (data) {
+        console.log(data);
+        page.page = data.page;
+        page.totalpage = data.totalpage;
+        $(".media-pager").pager({pagenumber: page.page,
+                                 pagecount: page.totalpage,
+                                 buttonClickCallback: PageClick});
+        $('#media-accordion').html(render_share_files(data.data));
+        return false;
+    });
+    return false;
+}
+
+function render_share_files (data) {
+    var html = '';
+    for (var i = 0; i < data.length; i++) {
+        html += '<div class="accordion-group"><div class="accordion-heading">';
+        html += '<a href="' + download_share_url + data[i].filename + '">';
+        html += '<i class="icon-file"></i>' + data[i].filename + '</a>';
+        html += '<span class="media-date"><i class="icon-download"></i><a href="' + download_share_url + data[i].filename + '">下载文件</a></span>';
+        html += '</div></div>';
+    }
+    return html;
 }

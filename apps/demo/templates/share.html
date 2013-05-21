@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block css %}
+<link type="text/css" rel="stylesheet" href="{{static_url('css/media.css')}}"/>
+<link type="text/css" rel="stylesheet" href="{{static_url('css/media-pager.css')}}"/>
+{% end %}
+{% block content %}
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="#">网盘</a>
+            <div class="nav-collapse collapse">
+                <div class="pull-right dropdown">
+                    <a class="dropdown-toggle btn" id="dLabel" data-toggle="dropdown" href="#">
+                        <i class="icon-user"></i>{{user['name']}}<b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li><a href="{{reverse_url('logout')}}">Logout</a></li>
+                    </ul>
+                </div>
+                <ul class="nav">
+                    <li class="active">
+                        <a href="{{reverse_url('index')}}">文件管理</a>
+                    </li>
+                    <li class="active">
+                        <a href="{{reverse_url('share')}}">分享</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <div class="container">
+        <div class="media-box">
+            <div class="media-content-box" id="media-accordion">
+            </div>
+        </div>
+        <div class="media-box">
+            <div class="media-pager" id="pager">
+            </div>
+        </div>
+    </div>
+</div>
+{% module xsrf_form_html() %}
+{% end %}
+{% block js %}
+<script type="text/javascript" src="{{static_url('js/utils.js')}}"></script>
+<script type="text/javascript" src="{{static_url('js/jquery.pager.js')}}"></script>
+<script type="text/javascript">
+    var page = {'totalpage': 1, 'page': 1};
+    var share_filelist_url = '{{reverse_url("share_filelist")}}';
+    var download_share_url = '{{reverse_url("share_file_download", "0")}}'.slice(0, -1);;
+    $(document).ready(function () {
+        render_user_share_files(page);
+    });
+</script>
+{% end %}

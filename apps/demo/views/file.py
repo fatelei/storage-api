@@ -153,6 +153,17 @@ class DemoSearchMemberHandler(BaseHandler):
         return response
 
 class DemoFilesListHandler(BaseHandler):
+    @render("share.html")
+    @web.authenticated
+    def get(self):
+        token = self.get_secure_cookie("access_token")
+        response = self.client.api_get("member/info", token)
+        _, content = response
+        content = json.loads(content)
+        self.set_secure_cookie("name", content['name'])
+        return response
+
+class DemoFilesListAjaxHandler(BaseHandler):
     @render(None)
     @web.authenticated
     def get(self):
@@ -164,7 +175,12 @@ class DemoFilesListHandler(BaseHandler):
 
 
 class DemoFileShareDownload(BaseHandler):
-    @render(None)
     @web.authenticated
-    def get(self):
-        pass
+    def get(self, filename):
+        token = self.get_secure_cookie("access_token")
+        params = {'filename': filename}
+        resp, content = self.client.api_get("member/share/file/download", token, **params)
+        content = json.loads(content)
+        self.set_header("Content-Type", content[0]['content_type'])
+        self.set_header('Content-Disposition', 'attachment; filename='+content[0]['filename'])
+        self.write(content[0]['data'])

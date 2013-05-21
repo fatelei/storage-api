@@ -22,9 +22,9 @@ class MemberPwdChange(BaseHandler, MemberMixin):
         password = self.get_argument('password', None)
         re_password = self.get_argument('re_password', None)
         if not password or not re_password:
-            raise exceptions.InvalidRequest('params error')
+            raise exceptions.InvalidRequest(u'参数错误')
         if password != re_password:
-            raise exceptions.InvalidRequest('password is not the same')
+            raise exceptions.InvalidRequest(u'密码不一致')
         info = self.api_member_change_password(password, re_password)
         return info
 
@@ -54,7 +54,7 @@ class OAuthApiLogoutHandler(web.RequestHandler):
 			self.set_header("Content-Type", "application/json")
 			self.write(json.dumps({"success": True}))
 		else:
-			raise exceptions.InvalidRequest(u"user has been logout")
+			raise exceptions.InvalidRequest(u"用户已经注销t")
 
 class RegisterHandler(BaseHandler, MemberMixin):
     def real_post(self):
