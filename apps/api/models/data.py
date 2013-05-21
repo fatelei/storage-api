@@ -10,6 +10,21 @@ from mongoengine import signals
 
 from api.allin.macro import POST_SAVE_LOG_TEMPLATE, PRE_SAVE_LOG_TEMPLATE
 
+
+class FileShare(Document):
+    member_id = StringField(max_length = 40, required = True)
+    share_filename = StringField(max_length = 40, required = True)
+    share_to_member = ListField(StringField(max_length = 40))
+    is_delete = IntField(default = 0)
+
+    meta = {
+        'collection': 'share',
+        'shard_key': ('member_id',),
+        'indexes': ['share_to_member', 'member_id', 'is_delete'],
+        'allow_inheritance': False
+    }
+
+
 class File(EmbeddedDocument):
     member_id = StringField(max_length = 40, required = True)
     filename = StringField(max_length = 40, required = True)

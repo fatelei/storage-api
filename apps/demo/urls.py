@@ -15,6 +15,8 @@ from demo.views.file import DemoFileExistHandler
 from demo.views.file import DemoFilesRemoveHandler
 from demo.views.file import DemoFilesDownloadHandler
 from demo.views.file import DemoGetUserSpaceHandler
+from demo.views.file import DemoSearchMemberHandler
+from demo.views.file import DemoFileShareHandler
 
 handlers = [
 	url("/", DemoLoginHandler, name = 'login'),
@@ -28,5 +30,7 @@ handlers = [
 	url("/demo/files/exists", DemoFileExistHandler, name = 'exists'),
 	url("/demo/files/remove", DemoFilesRemoveHandler, name = 'remove'),
 	url("/demo/files/download/(.+)", DemoFilesDownloadHandler, name = 'download'),
-	url("/demo/user/space", DemoGetUserSpaceHandler, name = 'space')
+	url("/demo/user/space", DemoGetUserSpaceHandler, name = 'space'),
+	url("/demo/user/search", DemoSearchMemberHandler, name = 'user_search'),
+	url("/demo/user/share/file", DemoFileShareHandler, name = 'share_file')
 ]

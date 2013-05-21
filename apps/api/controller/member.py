@@ -21,6 +21,10 @@ class MemberPwdChange(BaseHandler, MemberMixin):
     def real_put(self, *arge, **kwargs):
         password = self.get_argument('password', None)
         re_password = self.get_argument('re_password', None)
+        if not password or not re_password:
+            raise exceptions.InvalidRequest('params error')
+        if password != re_password:
+            raise exceptions.InvalidRequest('password is not the same')
         info = self.api_member_change_password(password, re_password)
         return info
 
@@ -57,10 +61,21 @@ class RegisterHandler(BaseHandler, MemberMixin):
         name = self.get_argument("name", None)
         email = self.get_argument("email", None)
         password = self.get_argument("password", None)
+        if not name:
+            raise exceptions.ParamsException(u"请输入用户名")
+        if not email:
+            raise exceptions.ParamsException(u"请输入注册邮箱")
+        if not password:
+            raise exceptions.ParamsException(u"请输入注册密码")
         info = self.api_member_register(name, email, password)
         return info
 
 class MemberInfoHandler(BaseHandler, MemberMixin):
     def real_get(self):
         info = self.api_member_info()
+        return info
+
+class MemberSearchHandler(BaseHandler, MemberMixin):
+    def real_get(self):
+        info = self.api_search_member()
         return info

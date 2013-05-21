@@ -126,3 +126,28 @@ class DemoGetUserSpaceHandler(BaseHandler):
         token = self.get_secure_cookie("access_token")
         response = self.client.api_get("member/space", token)
         return response
+
+
+class DemoFileShareHandler(BaseHandler):
+    @render(None)
+    @web.authenticated
+    def post(self):
+        filename = self.get_argument("filename", None)
+        if not filename:
+            return {'errmsg': u'请指定要分享的文件'}
+        username = self.get_argument("username", None)
+        if not username:
+            return {'errmsg': u'请指定要分享给的用户'}
+        token = self.get_secure_cookie("access_token")
+        params = {"filename": filename, "username": username}
+        response = self.client.api_put("member/file/share", token, **params)
+        return response
+
+
+class DemoSearchMemberHandler(BaseHandler):
+    @render(None)
+    @web.authenticated
+    def get(self):
+        token = self.get_secure_cookie("access_token")
+        response = self.client.api_get("member/search", token)
+        return response

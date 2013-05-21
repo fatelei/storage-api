@@ -51,3 +51,20 @@ class FileMixin(object):
             return json.loads(info)
         else:
             return info
+
+    def api_file_share(self, filename, username):
+        info = FileDAO.set_file_share(self.login_id, filename, username)
+        return info
+
+    def api_get_share_files(self, offset = MACRO.ZERO, limit = MACRO.DEFAULT_MAX_COUNT):
+        info = FileDAO.get_shared_files(self.login_id)
+        if info:
+            info['page'] = offset
+            info['data'] = info['data'][(offset - 1)*limit: offset*limit: 1]
+            return info
+        else:
+            return {}
+
+    def api_download_share_file(self, filename):
+        info = FileDAO.download_share_file(self.login_id, filename)
+        return info

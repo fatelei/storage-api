@@ -12,7 +12,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="brand" href="#">Demo</a>
+            <a class="brand" href="#">网盘</a>
             <div class="nav-collapse collapse">
                 <div class="pull-right dropdown">
                     <a class="dropdown-toggle btn" id="dLabel" data-toggle="dropdown" href="#">
@@ -24,7 +24,10 @@
                 </div>
                 <ul class="nav">
                     <li class="active">
-                        <a href="{{reverse_url('index')}}">Files</a>
+                        <a href="{{reverse_url('index')}}">文件管理</a>
+                    </li>
+                    <li class="active">
+                        <a href="#">分享</a>
                     </li>
                 </ul>
             </div>
@@ -35,9 +38,9 @@
     <div class="container">
         <div class="media-box">
             <div class="media-toolbar">
-                <span class="span-tool"></span><a href="#" class="btn" id="upload"><i class="icon-upload"></i>Upload</a>
-                <span class="span-tool"></span><a href="#" class="btn" id="download"><i class="icon-download"></i>Download</a>
-                <span class="span-tool"></span><a href="#" class="btn" onclick="return remove_batch();" id="remove"><i class="icon-trash"></i>Remove</a>
+                <span class="span-tool"></span><a href="#" class="btn" id="upload"><i class="icon-upload"></i>上传文件</a>
+                <span class="span-tool"></span><a href="#" class="btn" id="download"><i class="icon-download"></i>批量下载文件</a>
+                <span class="span-tool"></span><a href="#" class="btn" onclick="return remove_batch();" id="remove"><i class="icon-trash"></i>批量删除文件</a>
                 <span class="span-tool"></span><span class="label label-info" id="space"></span>
             </div>
             <div class="media-content-box" id="media-accordion">
@@ -49,6 +52,7 @@
         </div>
     </div>
     <!--hide modal-->
+    <!--upload modal-->
     <div id="upload-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="upLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -73,6 +77,7 @@
         <div class="modal-footer">
         </div>
     </div>
+    <!--upload progress-->
     <div id="info-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -106,6 +111,7 @@
 <script type="text/javascript" src="{{static_url('js/uploader.js')}}"></script>
 <script type="text/javascript" src="{{static_url('js/jquery.pager.js')}}"></script>
 <script type="text/javascript" src="{{static_url('js/rename.js')}}"></script>
+<script type="text/javascript" src="{{static_url('js/share.js')}}"></script>
 <script type="text/javascript">
     var page = {'totalpage': 1, 'page': 1};
     var files_url = '{{reverse_url("files")}}';
@@ -116,6 +122,8 @@
     var remove_url = '{{reverse_url("remove")}}';
     var download_url = '{{reverse_url("download", "0")}}'.slice(0, -1);
     var space_url = '{{reverse_url("space")}}';
+    var search_user_url = '{{reverse_url("user_search")}}';
+    var share_url = '{{reverse_url("share_file")}}';
     $(document).ready(function () {
         $('.dropdown-toggle').dropdown();
         $('#upload').bind('click', function () {

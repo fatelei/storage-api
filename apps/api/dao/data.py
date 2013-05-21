@@ -8,10 +8,12 @@ from mongoengine import Q
 from api.allin import exceptions
 from api.allin.macro import STORAGE_CODE
 from api.allin.macro import MACRO
-from api.models.data import File, Files
+from api.models.data import File, Files, FileShare
 from api.utils.tools import capacity_on_fly
 from api.utils.enctype import enctype_data
 from api.utils.cache import memcache as mc
+
+from oauthserver.models.member import Member
 
 class FileDAO:
     @classmethod
@@ -155,11 +157,11 @@ class FileDAO:
                 if f.filename in filenames:
                     index.append(files.files.index(f))
                     f.is_delete = 1
+                    cls.remove_file_share(f.filename)
                     remove_capacity += f.data.length
             if index != None:
                 index.reverse() #pop from big to small
                 for i in index:
-                    print i
                     files.files.pop(i)
                 files.usage = capacity_on_fly(cur_capacity, remove_capacity, 'delete')
                 files.save()
@@ -205,3 +207,58 @@ class FileDAO:
             for f in files.files:
                 data.append(f.filename)
             return data
+
+    @classmethod
+    def set_file_share(cls, member_id, filename, share_to_username):
+        info = {}
+        exists_share_user = Member.objects(name = share_to_username).only("member_id").first()
+        if not exists_share_user or exists_share_user.member_id == member_id:
+            raise exceptions.InvalidRequest(u"不存在此用户")
+        share = FileShare.objects(Q(member_id = member_id) & Q(share_filename = filename)).first()
+        if not share:
+            new_share = FileShare(member_id = member_id,
+                                  share_filename = filename,
+                                  share_to_username = [share_to_username])
+            new_share.save()
+        else:
+            share.update(add_to_set__share_to_member = share_to_username)
+            share.save()
+        info['msg'] = u"分享成功"
+        return info
+
+    @classmethod
+    def remove_file_share(cls, filename):
+        share = FileShare.objects(share_filename = filename).first()
+        if share:
+            share.update(is_delete = 1)
+            share.save()
+
+    @classmethod
+    def get_shared_files(cls, member_id):
+        member = Member.objects(member_id = member_id).only("name").first()
+        info = {}
+        data = []
+        if member:
+            shared_files = FileShare.objects(Q(share_to_username__in = member.name) &
+                                             Q(is_delete = 0))\
+                                    .only("share_filename")\
+                                    .first()
+            if shared_files:
+                for f in shared_files:
+                    data.append({"filename": f.share_filename})
+        info['data'] = data
+        info['totalpage'] = len(data)/MACRO.DEFAULT_MAX_COUNT if len(data)%MACRO.DEFAULT_MAX_COUNT == 0 else len(data)/MACRO.DEFAULT_MAX_COUNT + 1
+        return info
+
+    @classmethod
+    def download_share_file(cls, member_id, filename):
+        data = []
+        member = Member.objects(member_id = member_id).only("name").first()
+        if member:
+            share_member = FileShare.objects(Q(share_filename = filename) &
+                                             Q(share_to_username__in = member.name))\
+                                    .only("member_id")\
+                                    .first()
+            if share_member:
+                data = cls.download_file(share_member.member_id, filename)
+        return data

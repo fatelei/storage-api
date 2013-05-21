@@ -43,11 +43,13 @@ function render_files (data) {
                  data-toggle="collapse" data-parent="#media-accordion" href="#media' + i + '">更多操作</a>';
         html += '<span class="media-date"><strong>' + data[i].time + '</strong></span>';
         html += '<span class="media-size"><strong>' + data[i].type + '</strong></span></div>';
+        html += '<div id="media' + i + '" class="accordion-body collapse">';
         html += '<div class="accordion-inner"><ul class="media-op">';
-        html += '<li><i class="icon-download"></i><a href="' + download_url + data[i].filename + '">Download</a></li>';
-        html += '<li><i class="icon-pencil"></i><a href="#" onclick=\'return rename("' + data[i].filename + '");\'>Rename</a></li>';
+        html += '<li><i class="icon-download"></i><a href="' + download_url + data[i].filename + '">下载文件</a></li>';
+        html += '<li><i class="icon-pencil"></i><a href="#" onclick=\'return rename("' + data[i].filename + '");\'>重命名</a></li>';
         html += '<li class="media-divider"></li>';
-        html += '<li><i class="icon-trash"></i><a href="#" onclick=\'return remove_file("' + data[i].filename + '");\'>Remove</a></li></ul>';
+        html += '<li><i class="icon-trash"></i><a href="#" onclick=\'return remove_file("' + data[i].filename + '");\'>删除</a></li>';
+        html += '<li><i class="icon-share"></i><a href="#" onclick=\'return share("' + data[i].filename + '");\'>文件分享</a></li></ul>';
         html += '</div></div></div>';
     }
     return html;
@@ -90,7 +92,7 @@ function clear_attr(obj) {
 }
 
 function remove_file(filenames) {
-    if (!confirm("Are you sure to remove the file(s)?")) {
+    if (!confirm("你确定要删除所选文件吗?")) {
         return false;
     }
     var csrf = document.getElementsByName("_xsrf");
@@ -128,7 +130,7 @@ function remove_batch() {
         filenames += checklists[length - 1].value;
     }
     if (filenames.length == 0) {
-        alert("no file(s) choosed to be deleted!");
+        alert("请选择要删除的文件!");
         return false;
     } else {
         return remove_file(filenames);
@@ -157,11 +159,10 @@ function display_usage() {
             return false;
         }
     }).done(function (data) {
-        console.log(typeof(data));
         if ('errmsg' in data) {
             alert(data.errmsg);
         } else {
-            $('#space')[0].innerText = 'usage:' + data.usage + '/' + data.capacity;
+            $('#space')[0].innerText = '容量:' + data.usage + '/' + data.capacity/1024/1024 + 'MB';
         }
         return false;
     });
