@@ -6,7 +6,7 @@ from oauthserver.models.token import OAuthMember
 from base_config import MONGODB
 
 def run():
-    connect(db = MONGODB['db'], host = MONGODB['host'], replicaSet = MONGODB['replicaset'])
+    connect(MONGODB['db'], host = MONGODB['host'], replicaSet = MONGODB['replicaset'])
     admin = OAuthMember()
     admin.email = "fatelei@gmail.com"
     admin.set_password("123456")

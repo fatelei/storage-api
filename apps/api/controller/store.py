@@ -81,6 +81,7 @@ class FileShareHandler(BaseHandler, FileMixin):
         if not username:
             raise exceptions.ParamsException(u"请指定要分享给的用户")
         info = self.api_file_share(filename, username)
+        return info
 
 class FilesShareListHandler(BaseHandler, FileMixin):
     def real_get(self, *args, **kwargs):

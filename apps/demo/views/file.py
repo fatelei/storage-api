@@ -151,3 +151,20 @@ class DemoSearchMemberHandler(BaseHandler):
         token = self.get_secure_cookie("access_token")
         response = self.client.api_get("member/search", token)
         return response
+
+class DemoFilesListHandler(BaseHandler):
+    @render(None)
+    @web.authenticated
+    def get(self):
+        offset = int(self.get_argument("offset", 1))
+        token = self.get_secure_cookie("access_token")
+        params = {"offset": offset}
+        response = self.client.api_get("member/share/fileslist", token, **params)
+        return response
+
+
+class DemoFileShareDownload(BaseHandler):
+    @render(None)
+    @web.authenticated
+    def get(self):
+        pass

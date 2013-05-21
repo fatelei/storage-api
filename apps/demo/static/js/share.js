@@ -66,6 +66,7 @@ function start_share(filename) {
         dataType: 'json',
         data: {'_xsrf': csrf[0].value, 'filename': filename, 'username': obj[0].value}
     }).done(function(data) {
+        console.log(data);
         if ('errmsg' in data) {
             $(obj).parent().parent().addClass('error');
             $(obj).parent().append('<span class="help-inline">' + data.errmsg + '</span>');
