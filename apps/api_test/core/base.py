@@ -2,8 +2,9 @@
 #-*-coding: utf8-*-
 
 import urllib
+import requests
 
-from utils import urlencode, request, loads
+from utils import urlencode, loads
 
 class StorageOAuthClient(object):
     def __init__(self, oauth_url = '', email = '', password = '', client_secret = '', client_key = ''):
@@ -20,14 +21,20 @@ class StorageOAuthClient(object):
         body = urllib.urlencode({"grant_type": "password", "email": self.email,
                                  "password": self.password, "client_secret": self.client_secret,
                                  "client_key": self.client_key})
-        resp, content = request(self.oauth_url, method = "POST", body = body, headers = self.headers)
+        response = requests.post(self.oauth_url, data = body, headers = self.headers, verify = False)
+        status = {}
+        status['status'] = response.status_code
+        content = response.text
         content = loads(content)
-        return resp, content
+        return status, content
 
     def basic_logout(self, logout_url):
-        resp, content = request(logout_url, method = "POST", body = None, headers = self.headers)
+        response = requests.post(logout_url, data = None, headers = self.headers, verify = False)
+        status = {}
+        status['status'] = response.status_code
+        content = response.text
         content = loads(content)
-        return resp, content
+        return status, content
 
 class StorageAPIClient(object):
     def __init__(self, api_url = '', token = None):
@@ -48,9 +55,13 @@ class StorageAPIClient(object):
         req_url = "/".join([self.api_url, req_url])
         if self.token:
             self.headers['Authorization'] = "bearer:%s" % self.token
-        resp, content = request(req_url, method, body, self.headers)
+        func = getattr(requests, method.lower())
+        response = func(req_url, data = body, headers = self.headers, verify = False)
+        status = {}
+        status['status'] = response.status_code
+        content = response.text
         data = loads(content)
-        return resp, data
+        return status, data
 
     def get(self, path, **params):
         return self.execute_request(path, "GET", **params)

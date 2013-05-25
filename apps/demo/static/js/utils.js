@@ -162,7 +162,11 @@ function display_usage() {
         if ('errmsg' in data) {
             alert(data.errmsg);
         } else {
-            $('#space')[0].innerText = '容量:' + Math.round(data.usage/1024/1024) + 'MB/' + data.capacity/1024/1024 + 'MB';
+            if (window.navigator.userAgent.toLowerCase().indexOf("firefox") >= 1) {
+                $('#space')[0].textContent = '容量:' + Math.round(data.usage/1024/1024) + 'MB/' + data.capacity/1024/1024 + 'MB';
+            } else {
+                $('#space')[0].innerText = '容量:' + Math.round(data.usage/1024/1024) + 'MB/' + data.capacity/1024/1024 + 'MB';
+            }
         }
         return false;
     });

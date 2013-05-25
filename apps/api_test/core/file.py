@@ -21,3 +21,6 @@ class File(StorageAPIClient):
 
     def search_file(self, **params):
         return self.get("member/files/search", **params)
+
+    def share_file(self, **params):
+        return self.put("member/file/share", **params)

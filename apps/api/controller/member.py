@@ -46,15 +46,16 @@ class OAuthApiLoginHandler(web.RequestHandler):
         self.write(json.dumps(info))
 
 class OAuthApiLogoutHandler(web.RequestHandler):
-	def post(self, access_token):
-		token = AccessToken.objects(Q(access_token = access_token) & Q(is_expired = 0)).first()
-		if token:
-			token.is_expired = 1
-			token.save()
-			self.set_header("Content-Type", "application/json")
-			self.write(json.dumps({"success": True}))
-		else:
-			raise exceptions.InvalidRequest(u"用户已经注销t")
+    def post(self, access_token):
+        token = AccessToken.objects(Q(access_token = access_token) & Q(is_expired = 0)).first()
+        if token:
+            token.is_expired = 1
+            token.refreshable = 0
+            token.save()
+            self.set_header("Content-Type", "application/json")
+            self.write(json.dumps({"success": True}))
+        else:
+            raise exceptions.InvalidRequest(u"用户已经注销")
 
 class RegisterHandler(BaseHandler, MemberMixin):
     def real_post(self):

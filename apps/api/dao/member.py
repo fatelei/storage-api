@@ -10,8 +10,8 @@ from api.allin import exceptions
 
 class MemberDAO(object):
     @classmethod
-    def member_passwd_change(cls, password, re_password):
-        member = Member.objects(member_id = self.login_id).first()
+    def member_passwd_change(cls, password, re_password, member_id):
+        member = Member.objects(member_id = member_id).first()
         if not member:
             raise exceptions.InvalidRequest('请先登陆')
         member.set_password(password)

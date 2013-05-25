@@ -9,7 +9,7 @@ from api.allin import exceptions
 
 class MemberMixin(object):
     def api_member_change_password(self, password, re_password):
-        info = MemberDAO.member_passwd_change(password, re_password)
+        info = MemberDAO.member_passwd_change(password, re_password, self.login_id)
         return info
 
     def api_member_register(self, name, email, password):

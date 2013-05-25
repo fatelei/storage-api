@@ -26,6 +26,7 @@ class FileDownloadHandler(BaseHandler, FileMixin):
 class FileUploadHandler(BaseHandler, FileMixin):
     def real_post(self, *args, **kwargs):
         data = self.request.files
+        logging.warning(data)
         if not data:
             raise exceptions.ParamsException(u"请选择文件上传")
         info = self.api_upload_new_files(data['files'])

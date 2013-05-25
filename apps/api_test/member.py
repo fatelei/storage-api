@@ -3,7 +3,7 @@
 
 import unittest
 import config
-import httplib2
+import requests
 import urllib
 
 from core.utils import urlencode
@@ -21,11 +21,12 @@ class TestMember(unittest.TestCase):
                                         password = self.password, client_secret = self.client_secret, client_key = self.client_key)
         self.member = Member(api_url = config.API_URL, token = self.token)
 
+    @unittest.skip("skip")
     def test_login(self):
         resp, content = self.oauth.basic_login()
         self.assertEqual(int(resp['status']), 200)
 
-    @unittest.skip("skip")
+    
     def test_pwd_change(self):
         params = {"password": "123456", "re_password": "123456"}
         resp, content = self.member.change_password(**params)
@@ -40,12 +41,12 @@ class TestMember(unittest.TestCase):
     @unittest.skip("skip")
     def test_member_register(self):
         register_url = '%s/member/register' % (config.API_URL)
-        post_data = {"name": "test", "email": "test@test.com", "password": "123456"}
+        post_data = {"name": "test12", "email": "test1@test1.com", "password": "123456"}
         body = urlencode(post_data)
         headers = {"Authorization": "oauth:%s" % config.CLIENT_KEY, "Content-type": "application/x-www-form-urlencoded"}
-        http = httplib2.Http()
-        resp, response = http.request(register_url, method="POST", body = body, headers = headers)
-        self.assertEqual(int(resp['status']), 200)
+        response = requests.post(register_url, data = body, headers = headers, verify = False)
+        status = response.status_code
+        self.assertEqual(status, 200)
 
 if __name__ == '__main__':
     testsuite = unittest.TestLoader().loadTestsFromTestCase(TestMember)

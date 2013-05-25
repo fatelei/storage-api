@@ -49,6 +49,6 @@ def loads(content):
 
 
 def request(url, method, body, headers):
-    http = httplib2.Http()
+    http = httplib2.HTTPSConnectionWithTimeout(disable_ssl_certificate_validation = True)
     resp, content = http.request(url, method=method, body=body, headers=headers)
     return resp, content
